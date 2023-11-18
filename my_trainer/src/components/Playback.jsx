@@ -8,7 +8,7 @@ import VideoPlayer from './VideoPlayer';
 import { displaySkeletonOnVideo, onWebcamPose, onTrainingPose } from '../PoseDetection.js'
 
 function Playback({ video_url, user_params }) {
-    const videoRef = useRef(null);
+    const webcamRef = useRef(null);
 
     const minimizedProps = {className:"min-player", height:'30%', width:'500vh'};
     const maximizedProps = {className:"max-player", height:'100vh', width:'100%'};
@@ -20,13 +20,12 @@ function Playback({ video_url, user_params }) {
     let webcamPose = {send: () => {}};
 
     useEffect(() => {
-        const videoElement = videoRef.current;
+        const videoElement = webcamRef.current;
     
         const camera = new Camera(videoElement, {
             onFrame: async () => {
-            console.log(videoElement);
-            console.log(typeof videoElement);
-            // You can use webcamPose.send({ image: videoElement }) here
+                console.log("webcam frame");
+                // webcamPose.send({ image: videoElement })
             },
             width: webcamPlayerProps.width,
             height: webcamPlayerProps.height,
@@ -62,27 +61,19 @@ function Playback({ video_url, user_params }) {
         return () => {
             camera.stop();
         };
-      }, []); // Empty dependency array ensures that this effect runs only once
+      }, [webcamRef]); // Empty dependency array ensures that this effect runs only once
 
     // DEFINE FRAME CALLBACKS
     const handleTrainingVideoFrame = async (video) => {
-        console.log(typeof video)
-        console.log(video)
+        console.log("training frame");
         // trainingPose.send({image: frame})
         //run media pipe pose model on frame and get landmark information
     }
     
-    const handleWebcamFrame = async (video) => {
-        console.log(typeof video)
-        console.log(video)
-        webcamPose.send({image: video})
-        //run media pipe pose model on frame and get landmark information
-    }
     return (
       <div>
         {/* TRAINING VIDEO */}
         <VideoPlayer
-            webcam={false}
             video_url={video_url}
             props={trainingVideoProps}
             onFrame={handleTrainingVideoFrame}
@@ -99,7 +90,7 @@ function Playback({ video_url, user_params }) {
                     height: '100%',
                     transform: 'scaleX(-1)',
                 }}
-                ref={videoRef}
+                ref={webcamRef}
                 controls={false}
                 autoPlay={true}
             ></video>
