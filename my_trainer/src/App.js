@@ -15,12 +15,14 @@ function App() {
 
     <div className="App">
       <NavBar/>
-      <Routes>
-        <ThemeContext.Provider value={[videoAsset,setVideoAsset]}>
-          <Route exact path="/" element={<Home/>} />
-          <Route exact path="/game" element={<Game/>} />
-        </ThemeContext.Provider>
-      </Routes>
+      <ThemeContext.Provider value={[videoAsset,setVideoAsset]}>
+        <Home/>
+        {/* <Routes>
+            <Route exact path="/" element={<Home/>} />
+            <Route exact path="/game" element={<Game/>} />
+        </Routes> */}
+      </ThemeContext.Provider>
+
     </div>
   );
 }

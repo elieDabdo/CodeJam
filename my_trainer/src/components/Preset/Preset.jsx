@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import './Preset.css';
-import ThemeContext from '../../App';
+import {ThemeContext} from '../../App';
 
 const BoxWithPictureAndTitle = ({ pictureUrl, title, video }) => {
   let [videoAsset, setVideoAsset] = useContext(ThemeContext);
