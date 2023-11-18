@@ -38,7 +38,7 @@ function Playback({ video_url }) {
     //   }
     // };
 
-    const youtubeMinimizedProps = {className:"min-player", height:'30%', width:'30%'};
+    const youtubeMinimizedProps = {className:"min-player", height:'30%', width:'500vh'};
     const youtubeMaximizedProps = {className:"max-player", height:'100vh', width:'100%'};
 
     return (
@@ -47,7 +47,7 @@ function Playback({ video_url }) {
         <div className="main-player">
             <VideoPlayer
                 video_url={video_url}
-                props={youtubeMaximizedProps}
+                props={youtubeMinimizedProps}
                 onFrame={(frame) => console.log(frame)}
             />
         </div>
