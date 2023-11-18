@@ -64,27 +64,27 @@ function Playback({ video_url, user_params }) {
     
     return (
       <div>
-        <canvas ref={trainingCanvasRef} className={trainingVideoProps.className} style={{zIndex: 11, pointerEvents: 'none'}}></canvas>
-        <canvas ref={webcamCanvasRef} className={webcamPlayerProps.className} style={{zIndex: 11, pointerEvents: 'none'}}></canvas>
-
-        {/* TRAINING VIDEO */}
-        <VideoPlayer
-            video_url={video_url}
-            props={trainingVideoProps}
-            onFrame={handleTrainingVideoFrame}
-            detection_frame_rate={trainingVideoDetectionRate}
-            canvasRef={trainingCanvasRef}
-        />
-      
-        {/* WEBCAM INPUT */}
-        <VideoPlayer
-            webcam={true}
-            props={webcamPlayerProps}
-            onFrame={handleWebcamVideoFrame}
-            detection_frame_rate={webcamVideoDetectionRate}
-            canvasRef={webcamCanvasRef}
-        />
+        <div className='videos'>
+            <canvas ref={trainingCanvasRef} className={trainingVideoProps.className} style={{zIndex: 11, pointerEvents: 'none'}}></canvas>
+            <canvas ref={webcamCanvasRef} className={webcamPlayerProps.className} style={{zIndex: 11, pointerEvents: 'none'}}></canvas>
+            {/* TRAINING VIDEO */}
+            <VideoPlayer
+                video_url={video_url}
+                props={trainingVideoProps}
+                onFrame={handleTrainingVideoFrame}
+                detection_frame_rate={trainingVideoDetectionRate}
+                canvasRef={trainingCanvasRef}
+            />
         
+            {/* WEBCAM INPUT */}
+            <VideoPlayer
+                webcam={true}
+                props={webcamPlayerProps}
+                onFrame={handleWebcamVideoFrame}
+                detection_frame_rate={webcamVideoDetectionRate}
+                canvasRef={webcamCanvasRef}
+            />
+        </div>
       </div>
     );
   }

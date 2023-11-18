@@ -25,17 +25,17 @@ video {
 }
 
 .min-player {
-  /* pointer-events: none; */
   position: absolute;
   top: 0;
   left: 0;
   width: 30%;
   height: 30%;
   z-index: 10;
+  border-bottom: 5px solid #000; /* Set the border width, style, and color */
+  border-right: 5px solid #000; /* Set the border width, style, and color */
 }
 
 .max-player {
-  /* pointer-events: none; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,4 +47,17 @@ video {
   top: 0;
   left: 0;
   z-index: 1;
+}
+
+.videos {
+  position: absolute;
+  transform: translate(50%);
+  bottom: 0px;
+  right: 50%;
+  align-items: left;
+  display: block;
+  justify-content: center;
+  width: 90%;
+  height: 91.75%;
+  border: 5px solid #000; /* Set the border width, style, and color */
 }
