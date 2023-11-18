@@ -1,10 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import '@mediapipe/control_utils/control_utils.css';
-import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
-import { DrawingUtils } from '@mediapipe/drawing_utils/drawing_utils.js';
-import { Pose, VERSION } from '@mediapipe/pose/pose.js';
+import { Pose } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
-import { displaySkeletonOnVideo, onWebcamPose, onTrainingPose } from '../PoseDetection.js'
+import { onWebcamPose, onTrainingPose } from '../PoseDetection.js'
 
 // CREATE POSE DETECTOR OBJECTS
 const trainingPose = await new Pose({
@@ -26,13 +24,17 @@ const poseOptions = {
 trainingPose.setOptions(poseOptions);
 webcamPose.setOptions(poseOptions);
 
-// DEFINE POSE DETECTION CALLBACK FUNCTION
-trainingPose.onResults(onTrainingPose);
-webcamPose.onResults(onWebcamPose);
 
-const detection_frame_rate = 10;
+const detection_frame_rate = 7;
   
 function Playback({ video_url, user_params }) {
+    const webcamCanvasRef = useRef(null);
+    const trainingCanvasRef = useRef(null);
+
+    // DEFINE POSE DETECTION CALLBACK FUNCTION
+    trainingPose.onResults((results) => onTrainingPose(results, webcamCanvasRef.current, trainingCanvasRef.current, user_params));
+    webcamPose.onResults((results) => onWebcamPose(results, webcamCanvasRef.current, trainingCanvasRef.current, user_params));
+
     const minimizedProps = {className:"min-player", height:'30%', width:'500vh'};
     const maximizedProps = {className:"max-player", height:'100vh', width:'100%'};
 
@@ -60,6 +62,9 @@ function Playback({ video_url, user_params }) {
             onFrame={handleTrainingVideoFrame}
             detection_frame_rate={detection_frame_rate}
         />
+        <div className={trainingVideoProps.className}>
+            <canvas ref={trainingCanvasRef} width={trainingVideoProps.width} height={trainingVideoProps.height}></canvas>
+        </div>
       
         {/* WEBCAM INPUT */}
         <VideoPlayer
@@ -68,6 +73,10 @@ function Playback({ video_url, user_params }) {
             onFrame={handleWebcamVideoFrame}
             detection_frame_rate={detection_frame_rate}
         />
+        <div className={webcamPlayerProps.className}>
+            <canvas ref={webcamCanvasRef} width={webcamPlayerProps.width} height={webcamPlayerProps.height}></canvas>
+        </div>
+        
       </div>
     );
   }
