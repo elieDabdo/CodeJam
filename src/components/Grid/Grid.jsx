@@ -4,6 +4,7 @@ import './Grid.css';
 import YogaVideo from '../../assets/yoga.mp4';
 import TaiChiVideo from '../../assets/tai_chi.mp4';
 import StretchingVideo from '../../assets/stretching.mp4';
+import DancingVideo from '../../assets/dancing.mp4';
 
 const preset1 = {
     pictureUrl: "https://as1.ftcdn.net/v2/jpg/05/11/84/12/1000_F_511841276_7MyhimdVvJUi5sftZiCRtaIUMG2siF6t.jpg",
@@ -27,9 +28,9 @@ const preset3 = {
 }
 
 const preset4 = {
-    pictureUrl: "https://as1.ftcdn.net/v2/jpg/05/11/84/12/1000_F_511841276_7MyhimdVvJUi5sftZiCRtaIUMG2siF6t.jpg",
-    title: "Preset 4",
-    video: YogaVideo
+    pictureUrl: "https://www.shutterstock.com/image-photo/full-length-excited-funny-young-260nw-1967652817.jpg",
+    title: "Dancing",
+    video: DancingVideo
 
 }
 
