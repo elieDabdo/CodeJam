@@ -14,7 +14,7 @@ function VideoPlayer({ video_url, props, onFrame }) {
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  });
 
   return (
     <div>

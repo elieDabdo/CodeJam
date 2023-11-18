@@ -3,10 +3,36 @@ import '@mediapipe/control_utils/control_utils.css';
 import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
 import { ControlUtils } from '@mediapipe/control_utils/control_utils.js';
 import { DrawingUtils } from '@mediapipe/drawing_utils/drawing_utils.js';
-import { Pose } from '@mediapipe/pose/pose.js';
+import { Pose, VERSION } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
 import { displaySkeletonOnVideo, onWebcamPose, onTrainingPose } from '../PoseDetection.js'
 
+// CREATE POSE DETECTOR OBJECTS
+const trainingPose = new Pose({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${VERSION}/${file}`
+    });
+const webcamPose = new Pose({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${VERSION}/${file}`
+    });
+
+//SET OPTIONS
+const poseOptions = {
+        selfieMode: true,
+        upperBodyOnly: false,
+        smoothLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+    }
+    
+trainingPose.setOptions(poseOptions);
+webcamPose.setOptions(poseOptions);
+
+// DEFINE POSE DETECTION CALLBACK FUNCTION
+trainingPose.onResults(onTrainingPose);
+webcamPose.onResults(onWebcamPose);
+
+let init = false;
+  
 function Playback({ video_url, user_params }) {
     const webcamRef = useRef(null);
 
@@ -15,57 +41,33 @@ function Playback({ video_url, user_params }) {
 
     const trainingVideoProps = user_params.training_video_maximized ? maximizedProps : minimizedProps;
     const webcamPlayerProps = user_params.training_video_maximized ? minimizedProps : maximizedProps;
-    
-    let trainingPose = {send: () => {}};
-    let webcamPose = {send: () => {}};
+
 
     useEffect(() => {
-        const videoElement = webcamRef.current;
-    
-        const camera = new Camera(videoElement, {
+        if (init) return () => {};
+        init = true;
+        console.log(webcamRef.current);
+        
+        const camera = new Camera(webcamRef.current, {
             onFrame: async () => {
                 console.log("webcam frame");
-                // webcamPose.send({ image: videoElement })
+                // if (webcamRef.current.videoWidth) webcamPose.send({ image: webcamRef.current })
             },
-            width: webcamPlayerProps.width,
-            height: webcamPlayerProps.height,
+            width: 480,
+            height: 480,
         });
     
         camera.start();
-        
-        // CREATE POSE DETECTOR OBJECTS
-        trainingPose = new Pose({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
-        });
-        webcamPose = new Pose({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
-        });
-
-        //SET OPTIONS
-        const poseOptions = {
-                selfieMode: true,
-                upperBodyOnly: false,
-                smoothLandmarks: true,
-                minDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5
-            }
-            
-        trainingPose.setOptions(poseOptions);
-        webcamPose.setOptions(poseOptions);
-
-        // DEFINE POSE DETECTION CALLBACK FUNCTION
-        trainingPose.onResults(onTrainingPose);
-        webcamPose.onResults(onWebcamPose);
         
         // Cleanup function (optional) to be executed on component unmount
         return () => {
             camera.stop();
         };
-      }, [webcamRef]); // Empty dependency array ensures that this effect runs only once
+      });
 
     // DEFINE FRAME CALLBACKS
     const handleTrainingVideoFrame = async (video) => {
-        console.log("training frame");
+        // console.log("training frame");
         // trainingPose.send({image: frame})
         //run media pipe pose model on frame and get landmark information
     }
