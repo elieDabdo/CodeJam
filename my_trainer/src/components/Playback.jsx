@@ -1,18 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import '@mediapipe/control_utils/control_utils.css';
 import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
-import { ControlUtils } from '@mediapipe/control_utils/control_utils.js';
 import { DrawingUtils } from '@mediapipe/drawing_utils/drawing_utils.js';
 import { Pose, VERSION } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
 import { displaySkeletonOnVideo, onWebcamPose, onTrainingPose } from '../PoseDetection.js'
 
 // CREATE POSE DETECTOR OBJECTS
-const trainingPose = new Pose({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${VERSION}/${file}`
+const trainingPose = await new Pose({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
     });
-const webcamPose = new Pose({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${VERSION}/${file}`
+const webcamPose = await new Pose({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
     });
 
 //SET OPTIONS
@@ -50,11 +49,11 @@ function Playback({ video_url, user_params }) {
         
         const camera = new Camera(webcamRef.current, {
             onFrame: async () => {
-                console.log("webcam frame");
+                // console.log("webcam frame");
                 // if (webcamRef.current.videoWidth) webcamPose.send({ image: webcamRef.current })
             },
-            width: 480,
-            height: 480,
+            width: 1280,
+            height: 720,
         });
     
         camera.start();
@@ -67,8 +66,9 @@ function Playback({ video_url, user_params }) {
 
     // DEFINE FRAME CALLBACKS
     const handleTrainingVideoFrame = async (video) => {
-        // console.log("training frame");
-        // trainingPose.send({image: frame})
+        console.log(video);
+        console.log(video.videoWidth)
+        trainingPose.send({image: video})
         //run media pipe pose model on frame and get landmark information
     }
     
@@ -84,6 +84,7 @@ function Playback({ video_url, user_params }) {
         {/* WEBCAM INPUT */}
         <div className={webcamPlayerProps.className}>
             <video
+                className='input_video'
                 style={{
                     position: 'absolute',
                     top: 0,

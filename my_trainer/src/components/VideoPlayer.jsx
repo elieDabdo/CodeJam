@@ -8,7 +8,7 @@ function VideoPlayer({ video_url, props, onFrame }) {
   };
 
   useEffect(() => {
-    const intervalId = setInterval(handleNewFrame, 10);
+    const intervalId = setInterval(handleNewFrame, 1000);
 
     // Cleanup function to clear the interval when the component unmounts
     return () => {
@@ -21,6 +21,7 @@ function VideoPlayer({ video_url, props, onFrame }) {
       {/* Video Player */}
       <div className={props.className}>
         <video
+          className='input_video'
           style={{
             position: 'absolute',
             top: 0,
@@ -33,8 +34,9 @@ function VideoPlayer({ video_url, props, onFrame }) {
           width={props.width}
           height={props.height}
           autoPlay={true}
+          src={video_url}
         >
-          <source src={video_url} type="video/mp4" />
+          {/* <source src={video_url} type="video/mp4" /> */}
         </video>
       </div>
     </div>
