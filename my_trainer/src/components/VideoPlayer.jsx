@@ -46,29 +46,8 @@ function VideoPlayer({ webcam, video_url, props, onFrame }) {
         }
       }
     };
-  }
-  , [webcam, onFrame]);
+  }, [webcam, onFrame]);
 
-  useEffect(() => {
-    const videoElement = videoRef.current;
-
-    const camera = new Camera(videoElement, {
-      onFrame: async () => {
-        console.log(videoElement);
-        console.log(typeof videoElement);
-        onFrame(videoElement);
-      },
-      width: 480,
-      height: 480,
-    });
-
-    camera.start();
-
-    // Cleanup function to stop the camera when the component unmounts
-    return () => {
-      camera.stop();
-    };
-  }, []);
   return (
     <div>
       {/* Video Player */}

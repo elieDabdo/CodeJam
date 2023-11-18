@@ -105,6 +105,6 @@ const options = {
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5
 }
-video5.classList.toggle('selfie', options.selfieMode);
+// video5.classList.toggle('selfie', options.selfieMode);
 webcamPose.setOptions(options);
-ytPose.setOptions(options);
+// ytPose.setOptions(options);
