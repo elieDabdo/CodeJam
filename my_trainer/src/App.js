@@ -8,14 +8,14 @@ import yogaVideo from './assets/yoga.mp4'
 function App() {
   return (
     <div className="App">
-      <Playback video_url={yogaVideo} user_params={
-        {
-          training_video_maximized:true,
-          draw_webcam_skeleton_on_webcam:true,
-          draw_webcam_skeleton_on_training:true,
-          draw_training_skeleton_on_training:true,
-          draw_training_skeleton_on_webcam:true
-        }} />
+    <Playback video_url={yogaVideo} user_params={
+      {
+        training_video_maximized:true,
+        draw_webcam_skeleton_on_webcam:true,
+        draw_webcam_skeleton_on_training:true,
+        draw_training_skeleton_on_training:true,
+        draw_training_skeleton_on_webcam:true
+      }} />
     </div>
   );
 }
