@@ -6,53 +6,37 @@ import { DrawingUtils } from '@mediapipe/drawing_utils/drawing_utils.js';
 import { Pose } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
 
-function Playback({ video_url }) {
+function Playback({ video_url, user_params }) {
 
-    // const playVideo = () => {
-    //   if (playerRef.current) {
-    //     playerRef.current.play();
-    //   }
-    // };
-  
-    // const pauseVideo = () => {
-    //   if (playerRef.current) {
-    //     playerRef.current.pause();
-    //   }
-    // };
-  
-    // const seekToTime = (timeInSeconds) => {
-    //   if (playerRef.current) {
-    //     playerRef.current.seekTo(timeInSeconds, 'seconds');
-    //   }
-    // };
-  
-    // const setVolume = (volume) => {
-    //   if (playerRef.current) {
-    //     playerRef.current.setVolume(volume);
-    //   }
-    // };
-  
-    // const setPlaybackSpeed = (speed) => {
-    //   if (playerRef.current) {
-    //     playerRef.current.setPlaybackRate(speed);
-    //   }
-    // };
+    const minimizedProps = {className:"min-player", height:'30%', width:'500vh'};
+    const maximizedProps = {className:"max-player", height:'100vh', width:'100%'};
 
-    const youtubeMinimizedProps = {className:"min-player", height:'30%', width:'30%'};
-    const youtubeMaximizedProps = {className:"max-player", height:'100vh', width:'100%'};
+    const trainingVideoProps = user_params.training_video_maximized ? maximizedProps : minimizedProps;
+    const webcamPlayerProps = user_params.training_video_maximized ? minimizedProps : maximizedProps;
+
+    const handleTrainingVideoFrame = () => {
+
+    }
+    
+    const handleWebcamFrame = () => {
+        
+    }
 
     return (
       <div>
-        {/* YouTube Video Player */}
-        <div className="main-player">
-            <VideoPlayer
-                video_url={video_url}
-                props={youtubeMaximizedProps}
-                onFrame={(frame) => console.log(frame)}
-            />
-        </div>
+        {/* Training Video Player */}
+        <VideoPlayer
+            video_url={video_url}
+            props={trainingVideoProps}
+            onFrame={handleTrainingVideoFrame}
+        />
       
         {/* WEBCAM INPUT */}
+        <VideoPlayer
+            webcam={true}
+            props={webcamPlayerProps}
+            onFrame={handleWebcamFrame}
+        />
         <video className="input_video5" style={{ display: 'none' }}></video>
   
         {/* MEDIAPIPE OUTPUT */}

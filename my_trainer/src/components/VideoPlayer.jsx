@@ -1,44 +1,93 @@
 import React, { useRef, useEffect } from 'react';
-import html2canvas from 'html2canvas';
-import ReactPlayer from 'react-player/youtube';
 
-function VideoPlayer({ video_url, props, onFrame }) {
-    const playerRef = useRef(null);
-    const canvasRef = useRef(null);
+function VideoPlayer({ webcam, video_url, props, onFrame }) {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-    const handleNewFrame = (state) => {
-      console.log(playerRef.current);
-      html2canvas(playerRef.current).then((canvas) => {
-        // Convert the canvas to a data URL
-        const dataUrl = canvas.toDataURL('image/png');
-        onFrame(dataUrl);
-      });
+  useEffect(() => {
+    const handleNewFrame = () => {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+
+      if (video && canvas) {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get the image data from the canvas and pass it to onFrame
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        onFrame(imageData);
+      }
+    };
+
+    const startWebcam = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing webcam:', error);
+      }
+    };
+
+    if (webcam) {
+      startWebcam();
+      videoRef.current.addEventListener('timeupdate', handleNewFrame);
     }
-    console.log(video_url)
-    return (
-      <div>
-        {/* YouTube Video Player */}
-        <div className={props.className}>
-            <ReactPlayer
-                ref={playerRef}
-                url={video_url}
-                playing={true}
-                controls={false}
-                width={props.width}
-                height={props.height}
-                progressInterval={10}
-                
-                onProgress={handleNewFrame}
-                // config={{
-                //     youtube: {
-                //       playerVars: { showinfo: 0, controls: 0 }, // You can customize YouTube playerVars
-                //     },
-                // }}
-            />
-        </div>
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+    return () => {
+      // Cleanup: Stop the webcam stream when the component unmounts
+      if (webcam && videoRef.current) {
+        const stream = videoRef.current.srcObject;
+        if (stream) {
+          const tracks = stream.getTracks();
+          tracks.forEach((track) => track.stop());
+        }
+      }
+    };
+  }, [webcam, onFrame]);
+
+  return (
+    <div>
+      {/* Video Player */}
+      <div className={props.className}>
+        {webcam ? (
+          <video
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+            }}
+            ref={videoRef}
+            controls={true}
+            autoPlay={true}
+          ></video>
+        ) : (
+          <video
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+            }}
+            ref={videoRef}
+            controls={true}
+            width={props.width}
+            height={props.height}
+            autoPlay={true}
+          >
+            <source src={video_url} type="video/mp4" />
+          </video>
+        )}
       </div>
-    );
-  }
-  
-  export default VideoPlayer;
+
+      {/* Canvas for capturing frames */}
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+    </div>
+  );
+}
+
+export default VideoPlayer;
