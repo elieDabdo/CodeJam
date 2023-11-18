@@ -1,0 +1,14 @@
+- realtime Detect body pose on the webcam - YOLO/media pipe
+- realtime detect body pose on a video - YOLO/media pipe
+
+- UI for: video preset selection, video upload, playback, speed adjustment, playback progress bar + slider
+    BONUS: gesture for pausing
+first preset video: yoga!
+- layout: TBD
+- UI for displaying the body poses (probably easy)
+
+BONUS: voice feedback
+
+- function that compares the similarity of two body poses + returns some indication of which joint is wrong or something + maybe points/things that are good
+    ANTHONY
+- 
