@@ -1,4 +1,4 @@
-landmarks = {}
+landmarks = []
 
 function angle(v1, v2, z_scale) {
     v1[v1.length - 1] /= z_scale;
@@ -23,4 +23,16 @@ function getMiddlePoint(p1, p2) {
 
 function getVectors(p1,middle, p2) {
     return [p1[0] - middle[0], p1[1] - middle[1], p2[0] - middle[0], p2[1] - middle[1]];
+}
+
+function sortLandmarks(landmarks,index) {
+    return landmarks.sort((a, b) => a[1][index] - b[1][index]);
+}
+
+// for aligning the skeletons x, take hips then shoulders than head
+
+// for aligning the skeletons y, take the lowest point excluding the hands
+
+function alignSkeletons(move, reference) {|
+
 }
