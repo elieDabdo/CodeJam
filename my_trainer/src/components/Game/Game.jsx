@@ -1,12 +1,15 @@
 
-import React from 'react';
+import React, {useLocation} from 'react-router-dom';
+
 
 const Game = () => {
-  return (
-    <div>
-      {/* Your game content goes here */}
-    </div>
-  );
+    const location = useLocation();
+    const video = location.state.video;
+    console.log(video);
+    return (
+        <div>
+        </div>
+    );
 };
 
 export default Game;

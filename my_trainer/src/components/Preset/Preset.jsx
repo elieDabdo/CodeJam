@@ -1,18 +1,16 @@
-import React, {useContext} from 'react';
+import React from 'react';
+import { useNavigate } from "react-router-dom"
 import './Preset.css';
-import {ThemeContext} from '../../App';
 
-const BoxWithPictureAndTitle = ({ pictureUrl, title, video }) => {
-  let [videoAsset, setVideoAsset] = useContext(ThemeContext);
-  let changeVideoAsset = () => {
-    setVideoAsset(video);
-  }
+const Preset = ({ pictureUrl, title, video }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="preset">
-      <a onclick='changeVideoAsset' to="/game"><h2>{title}</h2></a>
+      <button onClick={()=>navigate('/game', {state: {video: video}})}>{<h2>{title}</h2>}</button>
       <img src={pictureUrl} alt="Box Picture" />
     </div>
   );
 };
 
-export default BoxWithPictureAndTitle;
+export default Preset;
