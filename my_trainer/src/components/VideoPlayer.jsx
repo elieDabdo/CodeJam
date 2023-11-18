@@ -1,8 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
 
-function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate }) {
+function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate, canvasRef }) {
   const videoRef = useRef(null);
+
+  const setVideoDimensions = (videoElement) => {
+    const scaling_factor = Math.min(videoElement.parentNode.offsetHeight / videoElement.videoHeight, videoElement.parentNode.offsetWidth / videoElement.videoWidth);
+    videoElement.style.width = scaling_factor * videoElement.videoWidth + 'px';
+    videoElement.style.height = scaling_factor * videoElement.videoHeight + 'px';
+    canvasRef.current.style.width = scaling_factor * videoElement.videoWidth + 'px';
+    canvasRef.current.style.height = scaling_factor * videoElement.videoHeight + 'px';
+
+  }
 
   useEffect(() => {
     const handleNewFrame = () => {
@@ -20,14 +29,15 @@ function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate }
       });
   
       camera.start();
-      
+      setVideoDimensions(videoRef.current);
       // Cleanup function (optional) to be executed on component unmount
       return () => { camera.stop(); };
     } else {
       const intervalId = setInterval(handleNewFrame, 1000/detection_frame_rate);
+      setVideoDimensions(videoRef.current);
       return () => { clearInterval(intervalId); }
     }
-  }, [webcam, onFrame]);
+  }, [webcam, onFrame, canvasRef]);
 
   return (
     <div>

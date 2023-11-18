@@ -1,4 +1,4 @@
-import { drawConnectors, drawLandmarks, Connection } from '@mediapipe/drawing_utils/drawing_utils.js';
+import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils/drawing_utils.js';
 
 // landmarks to be drawn on the training video
 const webcamLandmarks = {
@@ -17,33 +17,33 @@ const latestImages = {
     "training": null
 }
 
-POSE_CONNECTIONS = Connection()
-POSE_CONNECTIONS.add(1,2) // indices for vertices to connect
+const POSE_CONNECTIONS = []
+POSE_CONNECTIONS.push([1,2]) // indices for vertices to connect
 
 //////// VISUALIZATION PARAMETERS
 
 const trainerJointColor = '#03c2fc';
 const trainerJointFillColor = '#03c2fc';
-const trainerJointLineWidth = '#03c2fc';
-const trainerJointRadius = '#03c2fc'; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
+const trainerJointLineWidth = 1;
+const trainerJointRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const trainerJointDesign = {color:trainerJointColor, fillColor:trainerJointFillColor, lineWidth:trainerJointLineWidth, radius:trainerJointRadius}
 
 const trainerLimbColor = '#03c2fc';
 const trainerLimbFillColor = '#03c2fc';
-const trainerLimbLineWidth = '#03c2fc';
-const trainerLimbRadius = '#03c2fc'; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
+const trainerLimbLineWidth = 1;
+const trainerLimbRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const trainerLimbDesign = {color:trainerLimbColor, fillColor:trainerLimbFillColor, lineWidth:trainerLimbLineWidth, radius:trainerLimbRadius}
 
-const userJointColor = '#03c2fc';
-const userJointFillColor = '#03c2fc';
-const userJointLineWidth = '#03c2fc';
-const userJointRadius = '#03c2fc'; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
+const userJointColor = '#ecfc03';
+const userJointFillColor = '#ecfc03';
+const userJointLineWidth = 1;
+const userJointRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const userJointDesign = {color:userJointColor, fillColor:userJointFillColor, lineWidth:userJointLineWidth, radius:userJointRadius}
 
-const userLimbColor = '#03c2fc';
-const userLimbFillColor = '#03c2fc';
-const userLimbLineWidth = '#03c2fc';
-const userLimbRadius = '#03c2fc'; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
+const userLimbColor = '#ecfc03';
+const userLimbFillColor = '#ecfc03';
+const userLimbLineWidth = 1;
+const userLimbRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const userLimbDesign = {color:userLimbColor, fillColor:userLimbFillColor, lineWidth:userLimbLineWidth, radius:userLimbRadius}
 
 ///////////////////////
@@ -55,59 +55,53 @@ const userLimbDesign = {color:userLimbColor, fillColor:userLimbFillColor, lineWi
 // radius	number | Callback<LandmarkData, number>	The radius of location marker. Defaults to 6.
 
 const displaySkeletonsOnCanvas = (canvas, landmarks, image) => {
-    canvas.save();
-    canvas.clearRect(0, 0, out5.width, out5.height);
-    canvas.drawImage(results.image, 0, 0, out5.width, out5.height);
+    canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
+    // canvas.drawImage(image, 0, 0, canvas.canvas.width, canvas.canvas.height);
     if (landmarks.webcam) {  //display webcam landmarks
         drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, userLimbDesign);
         drawLandmarks(canvas, landmarks.webcam, userJointDesign);
     }
     if (landmarks.training) { //display training landmarks
+        console.log("training skeleton")
         drawConnectors(canvas, landmarks.training, POSE_CONNECTIONS, trainerLimbDesign);
         drawLandmarks(canvas, landmarks.training, trainerJointDesign);
     }
-    canvas.restore();
+    canvas.save();
 }
 
 const onWebcamPose = (detection, webCamCanvas, trainingCanvas, user_params) => {
-    console.log(detection)
     latestImages.webcam = detection.image;
     if (!detection.poseLandmarks) {
-        console.log("webcam")
+        console.log("webcam didnt detect")
         webcamLandmarks.webcam = null;
         trainingLandmarks.webcam = null;
-        // clear canvas that this feed draws on
-    } else {
-        if (user_params.draw_webcam_skeleton_on_webcam) {
-            webcamLandmarks.webcam = detection.poseLandmarks;
-            displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks)
-        }
+    }
+    if (user_params.draw_webcam_skeleton_on_webcam) {
+        webcamLandmarks.webcam = detection.poseLandmarks;
+        displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks, latestImages.webcam)
+    }
 
-        if (user_params.draw_webcam_skeleton_on_training) {
-            trainingLandmarks.webcam = detection.poseLandmarks;
-            if (latestImages.training) displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks)
-        }
+    if (user_params.draw_webcam_skeleton_on_training) {
+        trainingLandmarks.webcam = detection.poseLandmarks;
+        if (latestImages.training) displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks, latestImages.training)
     }
 }
 
 const onTrainingPose = (detection, webCamCanvas, trainingCanvas, user_params) => {
-    console.log(detection)
     latestImages.training = detection.image;
     if (!detection.poseLandmarks) {
-        console.log("training")
+        console.log("training didnt detect")
         webcamLandmarks.training = null;
         trainingLandmarks.training = null;
-        // clear canvas that this feed draws on
-    } else {
-        if (user_params.draw_training_skeleton_on_webcam) {
-            webcamLandmarks.training = detection.poseLandmarks;
-            if (latestImages.webcam) displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks)
-        }
-        
-        if (user_params.draw_training_skeleton_on_training) {
-            trainingLandmarks.training = detection.poseLandmarks;
-            displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks)
-        }
+    }
+    if (user_params.draw_training_skeleton_on_webcam) {
+        webcamLandmarks.training = detection.poseLandmarks;
+        if (latestImages.webcam) displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks, latestImages.webcam)
+    }
+    
+    if (user_params.draw_training_skeleton_on_training) {
+        trainingLandmarks.training = detection.poseLandmarks;
+        displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks, latestImages.training)
     }
 }
 
