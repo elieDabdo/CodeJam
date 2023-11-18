@@ -3,6 +3,7 @@ import Preset from '../Preset/Preset';
 import './Grid.css';
 import YogaVideo from '../../assets/yoga.mp4';
 import TaiChiVideo from '../../assets/tai_chi.mp4';
+import StretchingVideo from '../../assets/stretching.mp4';
 
 const preset1 = {
     pictureUrl: "https://as1.ftcdn.net/v2/jpg/05/11/84/12/1000_F_511841276_7MyhimdVvJUi5sftZiCRtaIUMG2siF6t.jpg",
@@ -21,7 +22,7 @@ const preset2 = {
 const preset3 = {
     pictureUrl: "https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     title: "Stretching",
-    video: YogaVideo
+    video: StretchingVideo
 
 }
 
