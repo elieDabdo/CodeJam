@@ -1,12 +1,15 @@
 import logo from './logo.svg';
 import './App.css';
+import Playback from './components/Playback';
+
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Hello, World!</h1>
+        MyTrainer
       </header>
+      <Playback youtubeLink="https://www.youtube.com/watch?v=j7rKKpwdXNE&ab_channel=YogaWithAdriene" />
     </div>
   );
 }
