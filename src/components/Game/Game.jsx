@@ -5,7 +5,6 @@ import Playback from '../Playback';
 const Game = () => {
     const location = useLocation();
     const video = location.state.video;
-    console.log(video);
     return (
         <Playback video_url={video} user_params={
             {

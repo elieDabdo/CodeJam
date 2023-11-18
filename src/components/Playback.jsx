@@ -4,6 +4,34 @@ import { Pose } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
 import { onWebcamPose, onTrainingPose } from '../visualization.js'
 
+async function importStylesheet() {
+    return new Promise((resolve, reject) => {
+      const link = document.createElement('link');
+      link.href = '@mediapipe/control_utils/control_utils.css';
+      link.rel = 'stylesheet';
+      link.onload = () => resolve(link);
+      link.onerror = importStylesheet;
+  
+      document.head.appendChild(link);
+    });
+  }
+
+async function importPose() {
+    while (!Pose) {
+        try {
+            // Attempt to import the Pose class
+            ({ Pose } = await import('@mediapipe/pose/pose.js'));
+        } catch (error) {
+            console.error('Error importing Pose.js:', error);
+            await new Promise(resolve => setTimeout(resolve, 200)); // Wait for 1 second before retrying
+        }
+    }
+}
+  
+// Call the function to start the import and retry process for the stylesheet
+await importStylesheet();
+await importPose();
+
 // CREATE POSE DETECTOR OBJECTS
 let initialized = false;
 const wait = () => new Promise(resolve => setTimeout(resolve, 1000));
@@ -11,36 +39,44 @@ const wait = () => new Promise(resolve => setTimeout(resolve, 1000));
 let trainingPose;
 let webcamPose;
 
-while (!initialized) {
+//SET OPTIONS
+const poseOptions = {
+    selfieMode: true,
+    upperBodyOnly: false,
+    smoothLandmarks: true,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+    runningMode: "VIDEO",
+}
+
+const initialize = async ({onlyTraining, onlyWebcam}) => {
     try {
-        trainingPose = await new Pose({
-            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
-            });
-        webcamPose = await new Pose({
-            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
-            });
-        initialized = true;
+        if (!onlyWebcam) {
+            trainingPose = await new Pose({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+                });
+        }
+        if (!onlyTraining) {
+            webcamPose = await new Pose({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+                });
+        }
+        webcamPose.setOptions(poseOptions);
+        poseOptions.selfieMode = false;
+        trainingPose.setOptions(poseOptions);
+        return true;
     } catch {
-        console.log("Failed model instantiation. Trying again")
-        await wait()
+        console.log("Failed model instantiation.")
+        return false;
     }
 }
 
-
-//SET OPTIONS
-const poseOptions = {
-        selfieMode: true,
-        upperBodyOnly: false,
-        smoothLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-        runningMode: "VIDEO",
-    }
-    
-webcamPose.setOptions(poseOptions);
-poseOptions.selfieMode = false;
-trainingPose.setOptions(poseOptions);
-
+while (!initialized) {
+    await initialize({onlyTraining:false, onlyWebcam:false}).then((success) => {
+        initialized = success;
+    })
+    await wait()
+}
 
 const maximized_detection_frame_rate = 10;
 const minimized_detection_frame_rate = 8;
@@ -52,9 +88,16 @@ function Playback({ video_url, user_params }) {
     const trainingCanvasRef = useRef(null);
 
     // DEFINE POSE DETECTION CALLBACK FUNCTION
-    trainingPose.onResults((results) => onTrainingPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
-    webcamPose.onResults((results) => onWebcamPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
-
+    let initOnResults = false;
+    while (!initOnResults) {
+        try {
+            trainingPose.onResults((results) => onTrainingPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
+            webcamPose.onResults((results) => onWebcamPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
+            initOnResults = true;
+        } catch {
+            console.log("Failed onResults setup.")
+        }
+    }
     const minimizedProps = {className:"min-player", height:'30%', width:'500vh'};
     const maximizedProps = {className:"max-player", height:'100vh', width:'100%'};
     
@@ -69,7 +112,8 @@ function Playback({ video_url, user_params }) {
         try {
             await trainingPose.send({image: video})
         } catch {
-            console.log("Failed inference on video. Waiting and trying again.") 
+            console.log("Failed inference on training video. Waiting and trying again.") 
+            initialize({onlyTraining:true, onlyWebcam:false});
             await wait();
         }
         //run media pipe pose model on frame and get landmark information
@@ -80,7 +124,8 @@ function Playback({ video_url, user_params }) {
         try {
             await webcamPose.send({image: video})
         } catch {
-            console.log("Failed inference on video. Waiting and trying again.") 
+            console.log("Failed inference on webcam video. Waiting and trying again.") 
+            initialize({onlyTraining:false, onlyWebcam:true});
             await wait();
         }
         //run media pipe pose model on frame and get landmark information

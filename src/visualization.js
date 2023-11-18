@@ -62,7 +62,6 @@ const displaySkeletonsOnCanvas = (canvas, landmarks, image) => {
         drawLandmarks(canvas, landmarks.webcam, userJointDesign);
     }
     if (landmarks.training) { //display training landmarks
-        console.log("training skeleton")
         drawConnectors(canvas, landmarks.training, POSE_CONNECTIONS, trainerLimbDesign);
         drawLandmarks(canvas, landmarks.training, trainerJointDesign);
     }

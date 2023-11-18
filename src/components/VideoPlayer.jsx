@@ -24,6 +24,7 @@ function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate, 
               await wait();
               handleNewFrame();
           },
+          onloadeddata: () => {setVideoDimensions(videoRef.current);},
           width: 1280,
           height: 720,
       });
@@ -33,9 +34,18 @@ function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate, 
       // Cleanup function (optional) to be executed on component unmount
       return () => { camera.stop(); };
     } else {
-      const intervalId = setInterval(handleNewFrame, 1000/detection_frame_rate);
-      setVideoDimensions(videoRef.current);
-      return () => { clearInterval(intervalId); }
+      const loop = async () => {
+        handleNewFrame();
+        const wait = () => new Promise(resolve => setTimeout(resolve, 1000/detection_frame_rate));
+        await wait();
+        requestAnimationFrame(loop);
+      }
+      const startVideo = () => {
+        setVideoDimensions(videoRef.current);
+        requestAnimationFrame(loop);
+      }
+      videoRef.current.addEventListener('loadeddata', startVideo);
+      return () => { videoRef.current.removeEventListener('loadeddata', startVideo)}
     }
   }, [webcam, onFrame, canvasRef]);
 
