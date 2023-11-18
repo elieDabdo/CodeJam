@@ -9,7 +9,7 @@ function App() {
       <header className="App-header">
         MyTrainer
       </header>
-      <Playback youtubeLink="https://www.youtube.com/watch?v=j7rKKpwdXNE&ab_channel=YogaWithAdriene" />
+      <Playback video_url="https://www.youtube.com/watch?v=j7rKKpwdXNE&ab_channel=YogaWithAdriene" />
     </div>
   );
 }
