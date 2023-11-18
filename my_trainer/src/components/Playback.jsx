@@ -29,6 +29,8 @@ webcamPose.setOptions(poseOptions);
 // DEFINE POSE DETECTION CALLBACK FUNCTION
 trainingPose.onResults(onTrainingPose);
 webcamPose.onResults(onWebcamPose);
+
+const detection_frame_rate = 10;
   
 function Playback({ video_url, user_params }) {
     const minimizedProps = {className:"min-player", height:'30%', width:'500vh'};
@@ -45,7 +47,6 @@ function Playback({ video_url, user_params }) {
     
     // DEFINE FRAME CALLBACKS
     const handleWebcamVideoFrame = async (video) => {
-        console.log(video);
         await trainingPose.send({image: video})
         //run media pipe pose model on frame and get landmark information
     }
@@ -53,17 +54,19 @@ function Playback({ video_url, user_params }) {
     return (
       <div>
         {/* TRAINING VIDEO */}
-        {/* <VideoPlayer
+        <VideoPlayer
             video_url={video_url}
             props={trainingVideoProps}
             onFrame={handleTrainingVideoFrame}
-        /> */}
+            detection_frame_rate={detection_frame_rate}
+        />
       
         {/* WEBCAM INPUT */}
         <VideoPlayer
             webcam={true}
             props={webcamPlayerProps}
             onFrame={handleWebcamVideoFrame}
+            detection_frame_rate={detection_frame_rate}
         />
       </div>
     );

@@ -1,38 +1,30 @@
 import React, { useRef, useEffect } from 'react';
 import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
 
-function VideoPlayer({ webcam, video_url, props, onFrame }) {
+function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
     const handleNewFrame = () => {
       onFrame(videoRef.current)
     };
-    if (webcam) {  
-      const startWebcam = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          videoRef.current.srcObject = stream;
-        } catch (error) {
-          console.error('Error accessing webcam:', error);
-        }
-      };
+    if (webcam) {
+      const camera = new Camera(videoRef.current, {
+          onFrame: async () => {
+              const wait = () => new Promise(resolve => setTimeout(resolve, 1000/detection_frame_rate));
+              await wait();
+              handleNewFrame();
+          },
+          width: 1280,
+          height: 720,
+      });
   
-      startWebcam();
-      videoRef.current.addEventListener('timeupdate', handleNewFrame);
-  
-      return () => {
-        // Cleanup: Stop the webcam stream when the component unmounts
-        if (webcam && videoRef.current) {
-          const stream = videoRef.current.srcObject;
-          if (stream) {
-            const tracks = stream.getTracks();
-            tracks.forEach((track) => track.stop());
-          }
-        }
-      };
+      camera.start();
+      
+      // Cleanup function (optional) to be executed on component unmount
+      return () => { camera.stop(); };
     } else {
-      const intervalId = setInterval(handleNewFrame, 1000);
+      const intervalId = setInterval(handleNewFrame, 1000/detection_frame_rate);
       return () => { clearInterval(intervalId); }
     }
   }, [webcam, onFrame]);
