@@ -22,8 +22,12 @@ function getMiddlePointX(p1, p2) {
     return (p1[0] + p2[0]) / 2;
 }
 
-function getVectors(p1,middle, p2) {
-    return [p1[0] - middle[0], p1[1] - middle[1], p2[0] - middle[0], p2[1] - middle[1]];
+function getVector(p1, p2) {
+    out = [];
+    for (let i = 0; i < p1.length; i++) {
+        out.push(p2[i] - p1[i]);
+    }
+    return out;
 }
 
 function sortLandmarks(landmarks,index) {
@@ -131,4 +135,17 @@ function alignSkeletonY(move, reference) {
     return moveAlignedY, reference;
 
     // shift every landmark in move by the difference
+}
+
+function scaleSkeletons(move,reference) {
+    // get the distance between the hips
+    let moveHipDistance = getVector(getCoordinates(move,"left_hip"),getCoordinates(move,"right_hip"));
+    let referenceHipDistance = getVector(getCoordinates(reference,"left_hip"),getCoordinates(reference,"right_hip"));
+    // scale the move skeleton by the ratio of the reference to move
+    let scale = referenceHipDistance / moveHipDistance;
+    let moveScaled = [];
+    for(let landmark in move) {
+        moveScaled.push([landmark[0],landmark[1] * scale,landmark[2]]);
+    }
+    return moveScaled, reference;
 }
