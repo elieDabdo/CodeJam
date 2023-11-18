@@ -89,19 +89,21 @@ function Playback({ video_url, user_params }) {
         />
       
         {/* WEBCAM INPUT */}
-        <video
-        style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            transform: 'scaleX(-1)',
-        }}
-        ref={videoRef}
-        controls={false}
-        autoPlay={true}
-        ></video>
+        <div className={webcamPlayerProps.className}>
+            <video
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    transform: 'scaleX(-1)',
+                }}
+                ref={videoRef}
+                controls={false}
+                autoPlay={true}
+            ></video>
+        </div>
       </div>
     );
   }
