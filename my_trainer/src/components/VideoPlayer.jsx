@@ -6,17 +6,18 @@ function VideoPlayer({ webcam, video_url, props, onFrame }) {
 
   useEffect(() => {
     const handleNewFrame = () => {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
+      onFrame(videoRef.current)
+      // const video = videoRef.current;
+      // const canvas = canvasRef.current;
 
-      if (video && canvas) {
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      // if (video && canvas) {
+      //   const context = canvas.getContext('2d', {willReadFrequently:true});
+      //   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Get the image data from the canvas and pass it to onFrame
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        onFrame(imageData);
-      }
+      //   // Get the image data from the canvas and pass it to onFrame
+      //   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      //   onFrame(imageData);
+      // }
     };
 
     const startWebcam = async () => {
@@ -45,8 +46,29 @@ function VideoPlayer({ webcam, video_url, props, onFrame }) {
         }
       }
     };
-  }, [webcam, onFrame]);
+  }
+  , [webcam, onFrame]);
 
+  useEffect(() => {
+    const videoElement = videoRef.current;
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        console.log(videoElement);
+        console.log(typeof videoElement);
+        onFrame(videoElement);
+      },
+      width: 480,
+      height: 480,
+    });
+
+    camera.start();
+
+    // Cleanup function to stop the camera when the component unmounts
+    return () => {
+      camera.stop();
+    };
+  }, []);
   return (
     <div>
       {/* Video Player */}
@@ -59,9 +81,10 @@ function VideoPlayer({ webcam, video_url, props, onFrame }) {
               left: 0,
               width: '100%',
               height: '100%',
+              transform: 'scaleX(-1)',
             }}
             ref={videoRef}
-            controls={true}
+            controls={false}
             autoPlay={true}
           ></video>
         ) : (

@@ -1,4 +1,4 @@
-const video5 = document.getElementsByClassName('input_video5')[0];
+const video5 = document.getElementsByClassName('aaainput_video5')[0];
 const out5 = document.getElementsByClassName('output5')[0];
 const controlsElement5 = document.getElementsByClassName('control5')[0];
 const canvasCtx5 = out5.getContext('2d');
@@ -11,93 +11,48 @@ function zColor(data) {
 }
 
 function onWebcamResultsPose(results) {
-  document.body.classList.add('loaded');
-  fpsControl.tick();
+//   document.body.classList.add('loaded');
+//   fpsControl.tick();
 
-  canvasCtx5.save();
-  canvasCtx5.clearRect(0, 0, out5.width, out5.height);
-  canvasCtx5.drawImage(
-      results.image, 0, 0, out5.width, out5.height);
-  drawConnectors(
-      canvasCtx5, results.poseLandmarks, POSE_CONNECTIONS, {
-        color: (data) => {
-          const x0 = out5.width * data.from.x;
-          const y0 = out5.height * data.from.y;
-          const x1 = out5.width * data.to.x;
-          const y1 = out5.height * data.to.y;
+//   canvasCtx5.save();
+//   canvasCtx5.clearRect(0, 0, out5.width, out5.height);
+//   canvasCtx5.drawImage(
+//       results.image, 0, 0, out5.width, out5.height);
+//   drawConnectors(
+//       canvasCtx5, results.poseLandmarks, POSE_CONNECTIONS, {
+//         color: (data) => {
+//           const x0 = out5.width * data.from.x;
+//           const y0 = out5.height * data.from.y;
+//           const x1 = out5.width * data.to.x;
+//           const y1 = out5.height * data.to.y;
 
-          const z0 = clamp(data.from.z + 0.5, 0, 1);
-          const z1 = clamp(data.to.z + 0.5, 0, 1);
+//           const z0 = clamp(data.from.z + 0.5, 0, 1);
+//           const z1 = clamp(data.to.z + 0.5, 0, 1);
 
-          const gradient = canvasCtx5.createLinearGradient(x0, y0, x1, y1);
-          gradient.addColorStop(
-              0, `rgba(0, ${255 * z0}, ${255 * (1 - z0)}, 1)`);
-          gradient.addColorStop(
-              1.0, `rgba(0, ${255 * z1}, ${255 * (1 - z1)}, 1)`);
-          return gradient;
-        }
-      });
-  drawLandmarks(
-      canvasCtx5,
-      Object.values(POSE_LANDMARKS_LEFT)
-          .map(index => results.poseLandmarks[index]),
-      {color: zColor, fillColor: '#FF0000'});
-  drawLandmarks(
-      canvasCtx5,
-      Object.values(POSE_LANDMARKS_RIGHT)
-          .map(index => results.poseLandmarks[index]),
-      {color: zColor, fillColor: '#00FF00'});
-  drawLandmarks(
-      canvasCtx5,
-      Object.values(POSE_LANDMARKS_NEUTRAL)
-          .map(index => results.poseLandmarks[index]),
-      {color: zColor, fillColor: '#AAAAAA'});
-  canvasCtx5.restore();
-}
-
-function onYoutubeResultsPose(results) {
-  document.body.classList.add('loaded');
-  fpsControl.tick();
-
-  canvasCtx5.save();
-  canvasCtx5.clearRect(0, 0, out5.width, out5.height);
-  canvasCtx5.drawImage(
-      results.image, 0, 0, out5.width, out5.height);
-  drawConnectors(
-      canvasCtx5, results.poseLandmarks, POSE_CONNECTIONS, {
-        color: (data) => {
-          const x0 = out5.width * data.from.x;
-          const y0 = out5.height * data.from.y;
-          const x1 = out5.width * data.to.x;
-          const y1 = out5.height * data.to.y;
-
-          const z0 = clamp(data.from.z + 0.5, 0, 1);
-          const z1 = clamp(data.to.z + 0.5, 0, 1);
-
-          const gradient = canvasCtx5.createLinearGradient(x0, y0, x1, y1);
-          gradient.addColorStop(
-              0, `rgba(0, ${255 * z0}, ${255 * (1 - z0)}, 1)`);
-          gradient.addColorStop(
-              1.0, `rgba(0, ${255 * z1}, ${255 * (1 - z1)}, 1)`);
-          return gradient;
-        }
-      });
-  drawLandmarks(
-      canvasCtx5,
-      Object.values(POSE_LANDMARKS_LEFT)
-          .map(index => results.poseLandmarks[index]),
-      {color: zColor, fillColor: '#FF0000'});
-  drawLandmarks(
-      canvasCtx5,
-      Object.values(POSE_LANDMARKS_RIGHT)
-          .map(index => results.poseLandmarks[index]),
-      {color: zColor, fillColor: '#00FF00'});
-  drawLandmarks(
-      canvasCtx5,
-      Object.values(POSE_LANDMARKS_NEUTRAL)
-          .map(index => results.poseLandmarks[index]),
-      {color: zColor, fillColor: '#AAAAAA'});
-  canvasCtx5.restore();
+//           const gradient = canvasCtx5.createLinearGradient(x0, y0, x1, y1);
+//           gradient.addColorStop(
+//               0, `rgba(0, ${255 * z0}, ${255 * (1 - z0)}, 1)`);
+//           gradient.addColorStop(
+//               1.0, `rgba(0, ${255 * z1}, ${255 * (1 - z1)}, 1)`);
+//           return gradient;
+//         }
+//       });
+//   drawLandmarks(
+//       canvasCtx5,
+//       Object.values(POSE_LANDMARKS_LEFT)
+//           .map(index => results.poseLandmarks[index]),
+//       {color: zColor, fillColor: '#FF0000'});
+//   drawLandmarks(
+//       canvasCtx5,
+//       Object.values(POSE_LANDMARKS_RIGHT)
+//           .map(index => results.poseLandmarks[index]),
+//       {color: zColor, fillColor: '#00FF00'});
+//   drawLandmarks(
+//       canvasCtx5,
+//       Object.values(POSE_LANDMARKS_NEUTRAL)
+//           .map(index => results.poseLandmarks[index]),
+//       {color: zColor, fillColor: '#AAAAAA'});
+//   canvasCtx5.restore();
 }
 
 // CREATE POSE DETECTOR OBJECT FOR WEBACM
@@ -110,6 +65,8 @@ webcamPose.onResults(onWebcamResultsPose);
 // SET DETECTION CALLBACK FOR WEBCAM
 const camera = new Camera(video5, {
   onFrame: async () => {
+    console.log(video5)
+    console.log(typeof video5)
     await webcamPose.send({image: video5});
   },
   width: 480,
@@ -117,75 +74,37 @@ const camera = new Camera(video5, {
 });
 camera.start();
 
-// CREATE POSE DETECTOR OBJECT FOR YOUTUBE VIDEO
-const ytPose = new Pose({locateFile: (file) => {
-  return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`;
-}});
-// DEFINE POSE DETECTION CALLBACK FUNCTION
-ytPose.onResults(onYoutubeResultsPose);
+// new ControlPanel(controlsElement5, )
+// .add([
+//   new StaticText({title: 'MediaPipe Pose'}),
+//   fpsControl,
+//   new Toggle({title: 'Selfie Mode', field: 'selfieMode'}),
+//   new Toggle({title: 'Upper-body Only', field: 'upperBodyOnly'}),
+//   new Toggle({title: 'Smooth Landmarks', field: 'smoothLandmarks'}),
+//   new Slider({
+//     title: 'Min Detection Confidence',
+//     field: 'minDetectionConfidence',
+//     range: [0, 1],
+//     step: 0.01
+//   }),
+//   new Slider({
+//     title: 'Min Tracking Confidence',
+//     field: 'minTrackingConfidence',
+//     range: [0, 1],
+//     step: 0.01
+//   }),
+// ])
+// .on(options => {
+//   console.log(options);
+// });
 
-
-// LOAD VIDEO FROM YOUTUBE
-let youtubePlayer;
-function loadYouTubeVideo() {
-  const youtubeLink = document.getElementById('youtubeLink').value;
-
-  if (youtubeLink) {
-      // Create a new yt-player instance
-      youtubePlayer = new YTPlayer('#youtubePlayer', {
-          width: 1280,
-          height: 720,
-          controls: true,
-      });
-
-      // Load the YouTube video
-      youtubePlayer.load(youtubeLink);
-
-      // Event listener to start pose detection on each frame
-      youtubePlayer.on('timeupdate', async () => {
-          // Get the current frame as an image
-          const frameImage = await youtubePlayer.getFrame();
-          
-          // Convert the frameImage to a video element
-          const frameVideo = document.createElement('video');
-          frameVideo.src = frameImage;
-
-          // Start pose detection once the video metadata is loaded
-          frameVideo.onloadedmetadata = async () => {
-              await pose.send({ image: frameVideo });
-          };
-      });
-  }
-}
-
-new ControlPanel(controlsElement5, {
+const options = {
   selfieMode: true,
   upperBodyOnly: false,
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5
-})
-.add([
-  new StaticText({title: 'MediaPipe Pose'}),
-  fpsControl,
-  new Toggle({title: 'Selfie Mode', field: 'selfieMode'}),
-  new Toggle({title: 'Upper-body Only', field: 'upperBodyOnly'}),
-  new Toggle({title: 'Smooth Landmarks', field: 'smoothLandmarks'}),
-  new Slider({
-    title: 'Min Detection Confidence',
-    field: 'minDetectionConfidence',
-    range: [0, 1],
-    step: 0.01
-  }),
-  new Slider({
-    title: 'Min Tracking Confidence',
-    field: 'minTrackingConfidence',
-    range: [0, 1],
-    step: 0.01
-  }),
-])
-.on(options => {
-  video5.classList.toggle('selfie', options.selfieMode);
-  webcamPose.setOptions(options);
-  ytPose.setOptions(options);
-});
+}
+video5.classList.toggle('selfie', options.selfieMode);
+webcamPose.setOptions(options);
+ytPose.setOptions(options);
