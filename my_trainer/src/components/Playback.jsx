@@ -5,12 +5,27 @@ import VideoPlayer from './VideoPlayer';
 import { onWebcamPose, onTrainingPose } from '../visualization.js'
 
 // CREATE POSE DETECTOR OBJECTS
-const trainingPose = await new Pose({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
-    });
-const webcamPose = await new Pose({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
-    });
+let initialized = false;
+const wait = () => new Promise(resolve => setTimeout(resolve, 1000));
+
+let trainingPose;
+let webcamPose;
+
+while (!initialized) {
+    try {
+        trainingPose = await new Pose({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+            });
+        webcamPose = await new Pose({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+            });
+        initialized = true;
+    } catch {
+        console.log("Failed model instantiation. Trying again")
+        await wait()
+    }
+}
+
 
 //SET OPTIONS
 const poseOptions = {
@@ -30,7 +45,6 @@ trainingPose.setOptions(poseOptions);
 const maximized_detection_frame_rate = 10;
 const minimized_detection_frame_rate = 8;
 
-const wait = () => new Promise(resolve => setTimeout(resolve, 1000));
 await wait();
   
 function Playback({ video_url, user_params }) {
@@ -52,13 +66,23 @@ function Playback({ video_url, user_params }) {
 
     // DEFINE FRAME CALLBACKS
     const handleTrainingVideoFrame = async (video) => {
-        await trainingPose.send({image: video})
+        try {
+            await trainingPose.send({image: video})
+        } catch {
+            console.log("Failed inference on video. Waiting and trying again.") 
+            await wait();
+        }
         //run media pipe pose model on frame and get landmark information
     }
     
     // DEFINE FRAME CALLBACKS
     const handleWebcamVideoFrame = async (video) => {
-        await webcamPose.send({image: video})
+        try {
+            await webcamPose.send({image: video})
+        } catch {
+            console.log("Failed inference on video. Waiting and trying again.") 
+            await wait();
+        }
         //run media pipe pose model on frame and get landmark information
     }
     
