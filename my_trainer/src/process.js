@@ -18,8 +18,8 @@ function angle(v1, v2, z_scale) {
 }
 
 
-function getMiddlePoint(p1, p2) {
-    return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+function getMiddlePointX(p1, p2) {
+    return (p1[0] + p2[0]) / 2;
 }
 
 function getVectors(p1,middle, p2) {
@@ -27,7 +27,10 @@ function getVectors(p1,middle, p2) {
 }
 
 function sortLandmarks(landmarks,index) {
-    return landmarks.sort((a, b) => a[1][index] - b[1][index]);
+    // sort lowest to highest
+    return landmarks.sort(function(a,b) {
+        return a[index] - b[index];
+    });
 }
 
 // for aligning the skeletons x, take hips then shoulders than head
@@ -39,7 +42,6 @@ function getConfidence(landmarks,key) {
         if (landmarks[i][0] === key) {
             return landmarks[i][2];
         }
-    
     }
 }
 
@@ -48,7 +50,6 @@ function getCoordinates(landmarks,key) {
         if (landmarks[i][0] === key) {
             return landmarks[i][1];
         }
-    
     }
 }
 
@@ -68,30 +69,31 @@ function shiftCoordinates(point,offset) {
     }
 }
 
+//need to make getMiddlePoint only get X
 function alignSkeletonX(move, reference) {
     // check hip confidence greater than threshold
     let middleMove;
     let middleReference;
     if(isConfidentInBoth(move,reference,"left_hip") && isConfidentInBoth(move,reference,"right_hip")) {
         //if confident, grab middle point
-        middleMove = getMiddlePoint(getCoordinates(move,"left_hip"),getCoordinates(move,"right_hip"));
-        middleReference = getMiddlePoint(getCoordinates(reference,"left_hip"),getCoordinates(reference,"right_hip"));
+        middleMove = getMiddlePointX(getCoordinates(move,"left_hip"),getCoordinates(move,"right_hip"));
+        middleReference = getMiddlePointX(getCoordinates(reference,"left_hip"),getCoordinates(reference,"right_hip"));
     }
     // check shoulder confidence greater than threshold
     else if(isConfidentInBoth(move,reference,"left_shoulder") && isConfidentInBoth(move,reference,"right_shoulder")) {
         //if confident, grab middle point
-        middleMove = getMiddlePoint(getCoordinates(move,"left_shoulder"),getCoordinates(move,"right_shoulder"));
-        middleReference = getMiddlePoint(getCoordinates(reference,"left_shoulder"),getCoordinates(reference,"right_shoulder"));
+        middleMove = getMiddlePointX(getCoordinates(move,"left_shoulder"),getCoordinates(move,"right_shoulder"));
+        middleReference = getMiddlePointX(getCoordinates(reference,"left_shoulder"),getCoordinates(reference,"right_shoulder"));
     }
     else if(isConfidentInBoth(move,reference,"nose")) {
-        middleMove = getCoordinates(move,"nose");
-        middleReference = getCoordinates(reference,"nose");
+        middleMove = getMiddlePointX(move,"nose");
+        middleReference = getMiddlePointX(reference,"nose");
     }
     else{
         //throw exception???
     }
 
-    offset = middleReference - middleMove;
+    offset = [middleReference - middleMove,0,0];
     //shift every landmark in move by the difference
     let moveAlignedX = [];
     for(let landmark in move) {
@@ -101,10 +103,32 @@ function alignSkeletonX(move, reference) {
 
 }
 
+function getLowestPointNotHands(landmarks) {
+    for(let landmark in landmarks) {
+        if(landmark[0] !== "left_hand" && landmark[0] !== "right_hand") {
+            return landmark[1];
+        }
+    }
+    return lowestPoint;
+}
+
 function alignSkeletonY(move, reference) {
     // sort both skeletons
-
+    let moveSorted = sortLandmarks(move,1);
+    let referenceSorted = sortLandmarks(reference,1);
     // find the lowest point excluding the hands
+
+    // gotta make this not get the hands
+    let lowestMoveCoordinates = getLowestPointNotHands(move);
+    let lowestReferenceCoordinates = getLowestPointNotHands(reference);
+    
+    let offset = [0,lowestReferenceCoordinates[1] - lowestMoveCoordinates[1],0];
+
+    let moveAlignedY = [];
+    for(let landmark in move) {
+        moveAlignedY.push([landmark[0],shiftCoordinates(landmark[1],offset),landmark[2]]);
+    }
+    return moveAlignedY, reference;
 
     // shift every landmark in move by the difference
 }
