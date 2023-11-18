@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/CodeJam/static/css/main.c2a63825.css",
-    "main.js": "/CodeJam/static/js/main.9e45a536.js",
+    "main.js": "/CodeJam/static/js/main.85366e43.js",
     "static/js/787.9dc40cd0.chunk.js": "/CodeJam/static/js/787.9dc40cd0.chunk.js",
     "static/media/yoga.mp4": "/CodeJam/static/media/yoga.fdfb3ab933b3a1ab5ea9.mp4",
     "static/media/logo.svg": "/CodeJam/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/CodeJam/index.html",
     "main.c2a63825.css.map": "/CodeJam/static/css/main.c2a63825.css.map",
-    "main.9e45a536.js.map": "/CodeJam/static/js/main.9e45a536.js.map",
+    "main.85366e43.js.map": "/CodeJam/static/js/main.85366e43.js.map",
     "787.9dc40cd0.chunk.js.map": "/CodeJam/static/js/787.9dc40cd0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c2a63825.css",
-    "static/js/main.9e45a536.js"
+    "static/js/main.85366e43.js"
   ]
 }
