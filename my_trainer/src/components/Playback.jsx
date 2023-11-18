@@ -1,37 +1,18 @@
 import React, { useRef, useEffect } from 'react';
-import '@mediapipe/control_utils/control_utils.css';
-import { Camera } from '@mediapipe/camera_utils/camera_utils.js';
-import { ControlUtils } from '@mediapipe/control_utils/control_utils.js';
-import { DrawingUtils } from '@mediapipe/drawing_utils/drawing_utils.js';
-import { Pose, VERSION } from '@mediapipe/pose/pose.js';
+import { Tensor, InferenceSession } from "onnxruntime-web";
 import VideoPlayer from './VideoPlayer';
 import { displaySkeletonOnVideo, onWebcamPose, onTrainingPose } from '../PoseDetection.js'
+import YOLO from "./yolov8n-pose.onnx"
 
-// CREATE POSE DETECTOR OBJECTS
-const trainingPose = new Pose({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${VERSION}/${file}`
-    });
-const webcamPose = new Pose({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${VERSION}/${file}`
-    });
+console.log("imported")
 
-//SET OPTIONS
-const poseOptions = {
-        selfieMode: true,
-        upperBodyOnly: false,
-        smoothLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5
+// LOAD ONNX MODEL
+const session = await InferenceSession.create(
+    YOLO,
+    {
+      executionProviders: ["webgl"],
     }
-    
-trainingPose.setOptions(poseOptions);
-webcamPose.setOptions(poseOptions);
-
-// DEFINE POSE DETECTION CALLBACK FUNCTION
-trainingPose.onResults(onTrainingPose);
-webcamPose.onResults(onWebcamPose);
-
-let init = false;
+  );
   
 function Playback({ video_url, user_params }) {
     const webcamRef = useRef(null);
@@ -42,36 +23,29 @@ function Playback({ video_url, user_params }) {
     const trainingVideoProps = user_params.training_video_maximized ? maximizedProps : minimizedProps;
     const webcamPlayerProps = user_params.training_video_maximized ? minimizedProps : maximizedProps;
 
-
-    useEffect(() => {
-        if (init) return () => {};
-        init = true;
-        console.log(webcamRef.current);
-        
-        const camera = new Camera(webcamRef.current, {
-            onFrame: async () => {
-                console.log("webcam frame");
-                // if (webcamRef.current.videoWidth) webcamPose.send({ image: webcamRef.current })
-            },
-            width: 480,
-            height: 480,
-        });
-    
-        camera.start();
-        
-        // Cleanup function (optional) to be executed on component unmount
-        return () => {
-            camera.stop();
-        };
-      });
-
     // DEFINE FRAME CALLBACKS
-    const handleTrainingVideoFrame = async (video) => {
+    const handleTrainingVideoFrame = async (frame) => {
         // console.log("training frame");
         // trainingPose.send({image: frame})
         //run media pipe pose model on frame and get landmark information
     }
     
+    // DEFINE FRAME CALLBACKS
+    const handleWebcamVideoFrame = async (frame) => {
+        console.log("webcam frame");
+        console.log(frame);
+
+        //need to modify code where it checks for scale or sizes and just use sizes!!
+
+        const frameTensor = new Tensor("float32", frame.data, [1, 3, frame.height, frame.width]);
+
+        const inputs = {
+            "images": frameTensor
+        }
+        const outputMap = await session.run(inputs);
+        // const outputTensor = outputMap.values().next().value;
+    }
+
     return (
       <div>
         {/* TRAINING VIDEO */}
@@ -82,21 +56,12 @@ function Playback({ video_url, user_params }) {
         />
       
         {/* WEBCAM INPUT */}
-        <div className={webcamPlayerProps.className}>
-            <video
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    transform: 'scaleX(-1)',
-                }}
-                ref={webcamRef}
-                controls={false}
-                autoPlay={true}
-            ></video>
-        </div>
+        <VideoPlayer
+            webcam={true}
+            video_url={video_url}
+            props={webcamPlayerProps}
+            onFrame={handleWebcamVideoFrame}
+        />
       </div>
     );
   }
