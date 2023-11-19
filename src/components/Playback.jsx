@@ -78,7 +78,7 @@ while (!initialized) {
     await wait()
 }
 
-const maximized_detection_frame_rate = 10;
+const maximized_detection_frame_rate = 8;
 const minimized_detection_frame_rate = 8;
 
 await wait();

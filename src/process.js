@@ -58,9 +58,12 @@ function getCoordinates(landmarks,key) {
 }
 
 function alignSkeletons(move, reference) {
+    // const moveAlignedX = alignSkeletonX(move, reference);
+    // const moveAlignedXY = alignSkeletonY(moveAlignedX, reference);
+    // return moveAlignedXY;
+
     const moveAlignedX = alignSkeletonX(move, reference);
-    const moveAlignedXY = alignSkeletonY(moveAlignedX, reference);
-    return moveAlignedXY;
+    return moveAlignedX;
 }
 
 function isConfidentInBoth(move, reference, key) {
@@ -72,6 +75,7 @@ function shiftCoordinates(point,offset) {
     for(let i in point) {
         newPoint.push(point[i] + offset[i]);
     }
+    return newPoint;
 }
 
 //need to make getMiddlePoint only get X
@@ -101,8 +105,8 @@ function alignSkeletonX(move, reference) {
     const offset = [middleReference - middleMove,0,0];
     //shift every landmark in move by the difference
     let moveAlignedX = [];
-    for(let landmark in move) {
-        moveAlignedX.push([landmark[0],shiftCoordinates(landmark[1],offset),landmark[2]]);
+    for(let i in move) {
+        moveAlignedX.push([move[i][0],shiftCoordinates(move[i][1],offset),move[i][2]]);
     }
     return moveAlignedX;
 
@@ -151,7 +155,11 @@ function scaleSkeletons(move,reference) {
 }
 
 function correctSkeletons(skeleton_to_change, reference_skeleton) {
-    const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
-    const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
+    // const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
+    // const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
+
+    const aligned_scaled_skeleton_to_change = alignSkeletons(skeleton_to_change, reference_skeleton);
     return aligned_scaled_skeleton_to_change;
 }
+
+export { correctSkeletons };
