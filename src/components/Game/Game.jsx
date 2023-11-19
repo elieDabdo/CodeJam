@@ -8,6 +8,7 @@ import './Game.css';
 
 const Game = () => {
     const location = useLocation();
+    console.log('Selected file:', location);
     const video = location.state.video;
     return (
         <>
