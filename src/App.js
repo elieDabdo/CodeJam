@@ -32,9 +32,9 @@ function App() {
       <Preloader load={load} />
       <div className="App" id={load ? "no-scroll" : "scroll"}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/CodeJam" element={<Home />} />
           <Route path="/presets" element={<Projects />} />
-          <Route path="*" element={<Navigate to="/"/>} />
+          <Route path="*" element={<Navigate to="/CodeJam"/>} />
           <Route exact path= "/game" element={<Game/>}/>
         </Routes>
       </div>

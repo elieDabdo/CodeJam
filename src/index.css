@@ -45,10 +45,12 @@ video {
 
 .videos {
   position: relative;
-  top: 53.2px;
+  /* top: 96px; */
   height: 600px;
   width: 100%;
-  bottom: 53.2px;
+  display: flex;
+  justify-content: center;
+  /* bottom: 53.2px; */
   /* transform: translate(50%);
   bottom: 0px;
   right: 50%;
