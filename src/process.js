@@ -1,5 +1,5 @@
 
-confidence_threshold = 0.5;
+const confidence_threshold = 0.5;
 
 function angle(v1, v2, z_scale) {
     v1[v1.length - 1] /= z_scale;
@@ -23,7 +23,7 @@ function getMiddlePointX(p1, p2) {
 }
 
 function getVector(p1, p2) {
-    out = [];
+    const out = [];
     for (let i = 0; i < p1.length; i++) {
         out.push(p2[i] - p1[i]);
     }
@@ -58,8 +58,9 @@ function getCoordinates(landmarks,key) {
 }
 
 function alignSkeletons(move, reference) {
-    moveAlignedX, referenceAlignedX = alignSkeletonX(move, reference);
-    moveAlignedXY, referenceAlignedXY = alignSkeletonY(move, reference);
+    const moveAlignedX = alignSkeletonX(move, reference);
+    const moveAlignedXY = alignSkeletonY(moveAlignedX, reference);
+    return moveAlignedXY;
 }
 
 function isConfidentInBoth(move, reference, key) {
@@ -67,7 +68,7 @@ function isConfidentInBoth(move, reference, key) {
 }
 
 function shiftCoordinates(point,offset) {
-    newPoint = [];
+    const newPoint = [];
     for(let i in point) {
         newPoint.push(point[i] + offset[i]);
     }
@@ -89,21 +90,21 @@ function alignSkeletonX(move, reference) {
         middleMove = getMiddlePointX(getCoordinates(move,"left_shoulder"),getCoordinates(move,"right_shoulder"));
         middleReference = getMiddlePointX(getCoordinates(reference,"left_shoulder"),getCoordinates(reference,"right_shoulder"));
     }
-    else if(isConfidentInBoth(move,reference,"nose")) {
-        middleMove = getMiddlePointX(move,"nose");
-        middleReference = getMiddlePointX(reference,"nose");
+    else if(isConfidentInBoth(move,reference,"head")) {
+        middleMove = getMiddlePointX(move,"head");
+        middleReference = getMiddlePointX(reference,"head");
     }
     else{
         //throw exception???
     }
 
-    offset = [middleReference - middleMove,0,0];
+    const offset = [middleReference - middleMove,0,0];
     //shift every landmark in move by the difference
     let moveAlignedX = [];
     for(let landmark in move) {
         moveAlignedX.push([landmark[0],shiftCoordinates(landmark[1],offset),landmark[2]]);
     }
-    return moveAlignedX, reference;
+    return moveAlignedX;
 
 }
 
@@ -113,7 +114,6 @@ function getLowestPointNotHands(landmarks) {
             return landmark[1];
         }
     }
-    return lowestPoint;
 }
 
 function alignSkeletonY(move, reference) {
@@ -132,7 +132,7 @@ function alignSkeletonY(move, reference) {
     for(let landmark in move) {
         moveAlignedY.push([landmark[0],shiftCoordinates(landmark[1],offset),landmark[2]]);
     }
-    return moveAlignedY, reference;
+    return moveAlignedY;
 
     // shift every landmark in move by the difference
 }
@@ -147,5 +147,11 @@ function scaleSkeletons(move,reference) {
     for(let landmark in move) {
         moveScaled.push([landmark[0],landmark[1] * scale,landmark[2]]);
     }
-    return moveScaled, reference;
+    return moveScaled;
+}
+
+function correctSkeletons(skeleton_to_change, reference_skeleton) {
+    const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
+    const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
+    return aligned_scaled_skeleton_to_change;
 }

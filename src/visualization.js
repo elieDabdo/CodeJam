@@ -1,4 +1,5 @@
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils/drawing_utils.js';
+import correctSkeletons from './process.js';
 
 // landmarks to be drawn on the training video
 const webcamLandmarks = {
@@ -23,6 +24,10 @@ const latestPoses = {
 }
 
 const jointQualities = null;
+
+const joint_names = [
+    "head",
+];
 
 //////// VISUALIZATION PARAMETERS
 
