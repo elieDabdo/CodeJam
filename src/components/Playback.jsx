@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import '@mediapipe/control_utils/control_utils.css';
+// import '@mediapipe/control_utils/control_utils.css';
 import { Pose } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
 import { onWebcamPose, onTrainingPose } from '../visualization.js'
