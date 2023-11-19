@@ -31,15 +31,12 @@ function App() {
     <Router>
       <Preloader load={load} />
       <div className="App" id={load ? "no-scroll" : "scroll"}>
-        <Navbar />
-        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/presets" element={<Projects />} />
           <Route path="*" element={<Navigate to="/"/>} />
           <Route exact path= "/game" element={<Game/>}/>
         </Routes>
-        <Footer />
       </div>
     </Router>
   );

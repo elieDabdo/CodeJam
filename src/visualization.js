@@ -125,7 +125,6 @@ const encodeLandmarks = (landmarks) => {
 }
 
 const decodeLandmarks = (landmarks) => {
-    console.log(landmarks);
     const decoded = new Array(16).fill(null);
     for (let i = 0; i < landmarks.length; i++) {
         const element = {

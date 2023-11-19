@@ -1,6 +1,8 @@
 
 import React, {useLocation} from 'react-router-dom';
 import Playback from '../Playback';
+import Navbar from '../Navbar';
+
 
 const Game = () => {
     const location = useLocation();
