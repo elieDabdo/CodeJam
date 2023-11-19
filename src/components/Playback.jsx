@@ -4,17 +4,17 @@ import { Pose } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
 import { onWebcamPose, onTrainingPose } from '../visualization.js'
 
-async function importStylesheet() {
-    return new Promise((resolve, reject) => {
-      const link = document.createElement('link');
-      link.href = '@mediapipe/control_utils/control_utils.css';
-      link.rel = 'stylesheet';
-      link.onload = () => resolve(link);
-      link.onerror = importStylesheet;
+// async function importStylesheet() {
+//     return new Promise((resolve, reject) => {
+//       const link = document.createElement('link');
+//       link.href = '@mediapipe/control_utils/control_utils.css';
+//       link.rel = 'stylesheet';
+//       link.onload = () => resolve(link);
+//       link.onerror = importStylesheet;
   
-      document.head.appendChild(link);
-    });
-  }
+//       document.head.appendChild(link);
+//     });
+//   }
 
 async function importPose() {
     while (!Pose) {
@@ -29,7 +29,7 @@ async function importPose() {
 }
   
 // Call the function to start the import and retry process for the stylesheet
-await importStylesheet();
+// await importStylesheet();
 await importPose();
 
 // CREATE POSE DETECTOR OBJECTS
