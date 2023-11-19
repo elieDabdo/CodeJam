@@ -15,6 +15,8 @@ const FileUploadContainer = styled.div`
   &:hover {
     border-color: #aaa;
   }
+
+  
 `;
 
 const UploadText = styled.p`
@@ -101,7 +103,7 @@ const FileUpload = ({ onFileChange, onInvalidFile }) => {
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
-      <UploadText>{isDragOver ? 'Drop the file here!' : 'Click or drag to upload a video'}</UploadText>
+      <UploadText>{isDragOver ? 'Drop the file here!' : 'Drag to upload a video'}</UploadText>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </FileUploadContainer>
   );
