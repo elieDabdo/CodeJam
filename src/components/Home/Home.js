@@ -8,6 +8,7 @@ import ScrollToTop from "../ScrollToTop";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 
+import yoga from "../../assets/yogagirlie.gif"
 
 function Home() {
   return (
@@ -40,15 +41,15 @@ function Home() {
 
               <Col md={5} style={{ paddingBottom: 20 }}>
                 <img
-                  src={homeLogo}
+                  src={yoga}
                   alt="home pic"
                   className="img-fluid"
                   style={{ maxHeight: "450px" }}
                 />
               </Col>
             </Row>
-          </Container>
         </Container>
+      </Container>
       </section>
       <Footer />
     </>

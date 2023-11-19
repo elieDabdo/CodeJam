@@ -1,5 +1,5 @@
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils/drawing_utils.js';
-import correctSkeletons from './process.js';
+import { correctSkeletons } from './process.js';
 
 // landmarks to be drawn on the training video
 const webcamLandmarks = {
@@ -10,11 +10,6 @@ const webcamLandmarks = {
 // landmarks to be drawn on the training video
 const trainingLandmarks = {
     "webcam" : null, //origin of landmarks
-    "training": null
-}
-
-const latestImages = {
-    "webcam": null,
     "training": null
 }
 
@@ -86,22 +81,62 @@ const userLimbDesign = {color:userLimbColor, fillColor:userLimbFillColor, lineWi
 // lineWidth	number | Callback<LandmarkData, number>	The width of the line boundary of the shape. Defaults to 4.
 // radius	number | Callback<LandmarkData, number>	The radius of location marker. Defaults to 6.
 
-const displaySkeletonsOnCanvas = (canvas, landmarks, image) => {
+const displaySkeletonsOnCanvas = (canvas, landmarks) => {
     canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
-    // canvas.drawImage(image, 0, 0, canvas.canvas.width, canvas.canvas.height);
     if (landmarks.webcam) {  //display webcam landmarks
         drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, userLimbDesign);
-        console.log(POSE_ENDPOINTS.map(index => landmarks.webcam[index]));
         drawLandmarks(canvas, POSE_ENDPOINTS.map(index => landmarks.webcam[index]), userJointEndpointDesign);
         drawLandmarks(canvas, landmarks.webcam, userJointDesign);
     }
     if (landmarks.training) { //display training landmarks
         drawConnectors(canvas, landmarks.training, POSE_CONNECTIONS, trainerLimbDesign);
-        console.log(POSE_ENDPOINTS.map(index => landmarks.training[index]));
         drawLandmarks(canvas, POSE_ENDPOINTS.map(index => landmarks.training[index]), trainerJointEndpointDesign);
         drawLandmarks(canvas, landmarks.training, trainerJointDesign);
     }
     canvas.save();
+}
+
+const indexNameMappings = [
+    "head",
+    "neck_base",
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_hand",
+    "right_hand",
+    "left_hip",
+    "right_hip",
+    "left_knee",
+    "right_knee",
+    "left_ankle",
+    "right_ankle",
+    "left_toes",
+    "right_toes"
+]
+
+const encodeLandmarks = (landmarks) => {
+    const encoded = [];
+    for (let i = 0; i < landmarks.length; i++) {
+        const element = [indexNameMappings[i], [landmarks[i].x, landmarks[i].y, landmarks[i].z], landmarks[i].visibility]
+        encoded.push(element);
+    }
+    return encoded;
+}
+
+const decodeLandmarks = (landmarks) => {
+    console.log(landmarks);
+    const decoded = new Array(16).fill(null);
+    for (let i = 0; i < landmarks.length; i++) {
+        const element = {
+            x: landmarks[i][1][0],
+            y: landmarks[i][1][1],
+            z: landmarks[i][1][2],
+            visibility: landmarks[i][2]
+        };
+        decoded[indexNameMappings.indexOf(landmarks[i][0])] = element;
+    }
+    return decoded;
 }
 
 const processDetection = (detection) => { 
@@ -109,9 +144,7 @@ const processDetection = (detection) => {
         return { poseLandmarks: undefined };
     }
     const newDetection = {
-        poseLandmarks: [],
-        image: detection.image,
-        namedTuples: []
+        poseLandmarks: []
     };
 
     const avgPoint = (p1,p2) => {
@@ -136,56 +169,55 @@ const processDetection = (detection) => {
     // 0 HEAD (take average between left and right ears)
     const leftEar = detection.poseLandmarks[8];
     const rightEar = detection.poseLandmarks[7];
-    newDetection.poseLandmarks.push(avgPoint(leftEar, rightEar))
+    newDetection.poseLandmarks.push(avgPoint(leftEar, rightEar));
     // 1 NECK BASE (take average between left and right ears)
     const leftShoulder = detection.poseLandmarks[12];
     const rightShoulder = detection.poseLandmarks[11];
-    newDetection.poseLandmarks.push(avgPoint(leftShoulder, rightShoulder))
+    newDetection.poseLandmarks.push(avgPoint(leftShoulder, rightShoulder));
     // 2 SHOULDER LEFT
-    newDetection.poseLandmarks.push(leftShoulder)
+    newDetection.poseLandmarks.push(leftShoulder);
     // 3 SHOULDER RIGHT
-    newDetection.poseLandmarks.push(rightShoulder)
+    newDetection.poseLandmarks.push(rightShoulder);
     // 4 ELBOW LEFT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[14])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[14]);
     // 5 ELBOW RIGHT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[13])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[13]);
     // 6 HAND LEFT
     const handLeftPoint1 = detection.poseLandmarks[16];
     const handLeftPoint2 = detection.poseLandmarks[18];
     const handLeftPoint3 = detection.poseLandmarks[20];
-    newDetection.poseLandmarks.push(avgThreePoints(handLeftPoint1,handLeftPoint2,handLeftPoint3))
+    newDetection.poseLandmarks.push(avgThreePoints(handLeftPoint1,handLeftPoint2,handLeftPoint3));
     // 7 HAND RIGHT
     const handRightPoint1 = detection.poseLandmarks[15];
     const handRightPoint2 = detection.poseLandmarks[17];
     const handRightPoint3 = detection.poseLandmarks[19];
-    newDetection.poseLandmarks.push(avgThreePoints(handRightPoint1,handRightPoint2,handRightPoint3))
+    newDetection.poseLandmarks.push(avgThreePoints(handRightPoint1,handRightPoint2,handRightPoint3));
     // 8 HIP LEFT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[24])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[24]);
     // 9 HIP RIGHT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[23])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[23]);
     // 10 KNEE LEFT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[26])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[26]);
     // 11 KNEE RIGHT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[25])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[25]);
     // 12 ANKLE LEFT
     const ankleLeftUpper = detection.poseLandmarks[28];
     const ankleLeftLower = detection.poseLandmarks[30];
-    newDetection.poseLandmarks.push(avgPoint(ankleLeftUpper, ankleLeftLower))
+    newDetection.poseLandmarks.push(avgPoint(ankleLeftUpper, ankleLeftLower));
     // 13 ANKLE RIGHT
     const ankleRightUpper = detection.poseLandmarks[27];
     const ankleRightLower = detection.poseLandmarks[29];
-    newDetection.poseLandmarks.push(avgPoint(ankleRightUpper, ankleRightLower))
+    newDetection.poseLandmarks.push(avgPoint(ankleRightUpper, ankleRightLower));
     // 14 TOES LEFT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[32])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[32]);
     // 15 TOES RIGHT
-    newDetection.poseLandmarks.push(detection.poseLandmarks[31])
+    newDetection.poseLandmarks.push(detection.poseLandmarks[31]);
 
     return newDetection;
 }
 
 const onWebcamPose = (detection, webCamCanvas, trainingCanvas, user_params) => {
     let processedDetection = processDetection(detection);
-    latestImages.webcam = processedDetection.image;
     if (!processedDetection.poseLandmarks) {
         console.log("webcam didnt detect")
         webcamLandmarks.webcam = null;
@@ -196,18 +228,18 @@ const onWebcamPose = (detection, webCamCanvas, trainingCanvas, user_params) => {
     }
     if (user_params.draw_webcam_skeleton_on_webcam) {
         webcamLandmarks.webcam = processedDetection.poseLandmarks;
-        displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks, latestImages.webcam)
+        displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks);
     }
 
     if (user_params.draw_webcam_skeleton_on_training) {
-        trainingLandmarks.webcam = processedDetection.poseLandmarks;
-        if (latestImages.training) displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks, latestImages.training)
+        
+        trainingLandmarks.webcam = (trainingLandmarks.training && processedDetection.poseLandmarks) ? decodeLandmarks(correctSkeletons(encodeLandmarks(processedDetection.poseLandmarks), encodeLandmarks(trainingLandmarks.training))) : processedDetection.poseLandmarks;
+        displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks);
     }
 }
 
 const onTrainingPose = (detection, webCamCanvas, trainingCanvas, user_params) => {
     let processedDetection = processDetection(detection);
-    latestImages.training = processedDetection.image;
     if (!processedDetection.poseLandmarks) {
         console.log("training didnt detect")
         webcamLandmarks.training = null;
@@ -217,13 +249,13 @@ const onTrainingPose = (detection, webCamCanvas, trainingCanvas, user_params) =>
         // jointQualities = computeJointQualities(latestPoses);
     }
     if (user_params.draw_training_skeleton_on_webcam) {
-        webcamLandmarks.training = processedDetection.poseLandmarks;
-        if (latestImages.webcam) displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks, latestImages.webcam)
+        webcamLandmarks.training = (webcamLandmarks.webcam && processedDetection.poseLandmarks) ? decodeLandmarks(correctSkeletons(encodeLandmarks(processedDetection.poseLandmarks), encodeLandmarks(webcamLandmarks.webcam))) : processedDetection.poseLandmarks;
+        displaySkeletonsOnCanvas(webCamCanvas, webcamLandmarks);
     }
     
     if (user_params.draw_training_skeleton_on_training) {
         trainingLandmarks.training = processedDetection.poseLandmarks;
-        displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks, latestImages.training)
+        displaySkeletonsOnCanvas(trainingCanvas, trainingLandmarks);
     }
 }
 
