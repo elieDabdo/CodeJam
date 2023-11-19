@@ -22,18 +22,18 @@ function getMiddlePointX(p1, p2) {
     return (p1[0] + p2[0]) / 2;
 }
 
-function getVector(p1, p2) {
+function getVectorDistance(p1, p2) {
     const out = [];
     for (let i = 0; i < p1.length; i++) {
         out.push(p2[i] - p1[i]);
     }
-    return out;
+    return Math.sqrt(out[0]*out[0] + out[1]*out[1] + out[2]*out[2]);
 }
 
 function sortLandmarks(landmarks,index) {
     // sort lowest to highest
     return landmarks.sort(function(a,b) {
-        return a[index] - b[index];
+        return b[index] - a[index];
     });
 }
 
@@ -111,18 +111,22 @@ function alignSkeletonX(move, reference) {
 
 function getLowestPointNotHands(landmarks) {
     for(let i in landmarks) {
-        if(landmarks[i][0] !== "left_hand" && landmarks[i][0] !== "right_hand") {
+        if(landmarks[i][0] !== "left_hand" && landmarks[i][0] !== "right_hand" && landmarks[i][2] >= confidence_threshold) {
             return landmarks[i][1];
         }
     }
+    return landmarks[0][1];
 }
 
 function alignSkeletonY(move, reference) {
+    // sort both skeletons
+    let moveSorted = sortLandmarks(move,1);
+    let referenceSorted = sortLandmarks(reference,1);
     // find the lowest point excluding the hands
 
     // gotta make this not get the hands
-    let lowestMoveCoordinates = getLowestPointNotHands(move);
-    let lowestReferenceCoordinates = getLowestPointNotHands(reference);
+    let lowestMoveCoordinates = getLowestPointNotHands(moveSorted);
+    let lowestReferenceCoordinates = getLowestPointNotHands(referenceSorted);
     
     let offset = [0,lowestReferenceCoordinates[1] - lowestMoveCoordinates[1],0];
 
@@ -135,45 +139,55 @@ function alignSkeletonY(move, reference) {
     // shift every landmark in move by the difference
 }
 
+const indexNameMappings = [
+    // "head",
+    "neck_base",
+    "left_shoulder",
+    "right_shoulder",
+    // "left_elbow",
+    // "right_elbow",
+    // "left_hand",
+    // "right_hand",
+    "left_hip",
+    "right_hip",
+    // "left_knee",
+    // "right_knee",
+    // "left_ankle",
+    // "right_ankle",
+    // "left_toes",
+    // "right_toes"
+]
+
 function scaleSkeletons(move,reference) {
-    // get the distance between the hips
-    let moveHipDistance = getVector(getCoordinates(move,"left_hip"),getCoordinates(move,"right_hip"));
-    let referenceHipDistance = getVector(getCoordinates(reference,"left_hip"),getCoordinates(reference,"right_hip"));
+    let weighted_scale = 0;
+    let accumulated_weight = 0;
+    for (const landmark1 of indexNameMappings) {
+        for (const landmark2 of indexNameMappings) {
+            if (landmark1 === landmark2) continue;
+            let moveDistance = getVectorDistance(getCoordinates(move,landmark1),getCoordinates(move,landmark2));
+            let referenceDistance = getVectorDistance(getCoordinates(reference,landmark1),getCoordinates(reference,landmark2));
+            let scale = referenceDistance / moveDistance;
+            let confidence = Math.min(move.find((d) => d[0] === landmark1)[2], move.find((d) => d[0] === landmark2)[2]);
+            if (confidence < 0.5) continue;
+            weighted_scale = ((weighted_scale*accumulated_weight) + (confidence*scale)) / (confidence + accumulated_weight);
+            accumulated_weight += confidence;
+        }
+    }
     // scale the move skeleton by the ratio of the reference to move
-    let scale = referenceHipDistance / moveHipDistance;
     let moveScaled = [];
-    for(let landmark in move) {
-        moveScaled.push([landmark[0],landmark[1] * scale,landmark[2]]);
+    for(let i in move) {
+        moveScaled.push([move[i][0], [move[i][1][0] * weighted_scale,move[i][1][1] * weighted_scale,move[i][1][2]], move[i][2]]);
     }
     return moveScaled;
 }
 
 function correctSkeletons(skeleton_to_change, reference_skeleton) {
-    // const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
-    // const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
+    const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
+    console.log(scaled_skeleton_to_change);
+    const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
 
-    const aligned_scaled_skeleton_to_change = alignSkeletons(skeleton_to_change, reference_skeleton);
+    // const aligned_scaled_skeleton_to_change = alignSkeletons(skeleton_to_change, reference_skeleton);
     return aligned_scaled_skeleton_to_change;
 }
 
-function computeJointQualities(latestPoses) {
-    
-    const t = latestPoses.training
-    const w = latestPoses.webcam
-
-    let distances = []
-
-    for (let i = 0; i < latestPoses.training.length; i++) {
-        
-        var distance = (t[i].x- w[i].x)*(t[i].x- w[i].x) + (t[i].y - w[i].y)*(t[i].y - w[i].y)
-
-        distances.push(distance)
-
-      }
-
-      return distances
-
-}
-
 export { correctSkeletons };
-export { computeJointQualities };
