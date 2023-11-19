@@ -80,8 +80,11 @@ while (!initialized) {
     await wait()
 }
 
-const maximized_detection_frame_rate = 8;
-const minimized_detection_frame_rate = 8;
+const maximized_detection_frame_rate = 60;
+const minimized_detection_frame_rate = 60;
+
+let webcamReceivedResults = true;
+let trainingReceivedResults = true;
 
 await wait();
   
@@ -112,7 +115,11 @@ function Playback({ video_url, user_params }) {
     // DEFINE FRAME CALLBACKS
     const handleTrainingVideoFrame = async (video) => {
         try {
-            await trainingPose.send({image: video})
+            if (trainingReceivedResults) {
+                trainingReceivedResults = false;
+                await trainingPose.send({image: video});
+                trainingReceivedResults = true;
+              }
         } catch {
             console.log("Failed inference on training video. Waiting and trying again.") 
             initialize({onlyTraining:true, onlyWebcam:false});
@@ -124,7 +131,11 @@ function Playback({ video_url, user_params }) {
     // DEFINE FRAME CALLBACKS
     const handleWebcamVideoFrame = async (video) => {
         try {
-            await webcamPose.send({image: video})
+            if (webcamReceivedResults) {
+                webcamReceivedResults = false;
+                await webcamPose.send({image: video});
+                webcamReceivedResults = true;
+              }
         } catch {
             console.log("Failed inference on webcam video. Waiting and trying again.") 
             initialize({onlyTraining:false, onlyWebcam:true});
