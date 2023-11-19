@@ -7,9 +7,10 @@ function Type() {
       options={{
         strings: [
           "Innovating the fitness industry",
-          "Bringing a healthier lifestyle to you",
+          "Bringing you a healthier lifestyle",
           "Yoga",
           "Tai Chi",
+          "Stretching",
           "Dancing",
         ],
         autoStart: true,
