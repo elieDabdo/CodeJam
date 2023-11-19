@@ -20,9 +20,9 @@ function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate, 
     if (webcam) {
       const camera = new Camera(videoRef.current, {
           onFrame: async () => {
+              handleNewFrame();
               const wait = () => new Promise(resolve => setTimeout(resolve, 1000/detection_frame_rate));
               await wait();
-              handleNewFrame();
           },
           onloadeddata: () => {setVideoDimensions(videoRef.current);},
           width: 1280,
@@ -45,7 +45,7 @@ function VideoPlayer({ webcam, video_url, props, onFrame, detection_frame_rate, 
         requestAnimationFrame(loop);
       }
       videoRef.current.addEventListener('loadeddata', startVideo);
-      return () => { videoRef.current.removeEventListener('loadeddata', startVideo)}
+      return () => { videoRef.current && videoRef.current.removeEventListener('loadeddata', startVideo)}
     }
   }, [webcam, onFrame, canvasRef]);
 

@@ -47,18 +47,20 @@ const poseOptions = {
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5,
     runningMode: "VIDEO",
+    modelSelection: 0,
+    modelComplexity: 0
 }
 
 const initialize = async ({onlyTraining, onlyWebcam}) => {
     try {
         if (!onlyWebcam) {
             trainingPose = await new Pose({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+                locateFile: (file) => `${process.env.PUBLIC_URL}/pose/${file}`
                 });
         }
         if (!onlyTraining) {
             webcamPose = await new Pose({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+                locateFile: (file) => `${process.env.PUBLIC_URL}/pose/${file}`
                 });
         }
         webcamPose.setOptions(poseOptions);
@@ -78,8 +80,11 @@ while (!initialized) {
     await wait()
 }
 
-const maximized_detection_frame_rate = 8;
-const minimized_detection_frame_rate = 8;
+const maximized_detection_frame_rate = 60;
+const minimized_detection_frame_rate = 60;
+
+let webcamReceivedResults = true;
+let trainingReceivedResults = true;
 
 await wait();
   
@@ -110,7 +115,11 @@ function Playback({ video_url, user_params }) {
     // DEFINE FRAME CALLBACKS
     const handleTrainingVideoFrame = async (video) => {
         try {
-            await trainingPose.send({image: video})
+            if (trainingReceivedResults) {
+                trainingReceivedResults = false;
+                await trainingPose.send({image: video});
+                trainingReceivedResults = true;
+              }
         } catch {
             console.log("Failed inference on training video. Waiting and trying again.") 
             initialize({onlyTraining:true, onlyWebcam:false});
@@ -122,7 +131,11 @@ function Playback({ video_url, user_params }) {
     // DEFINE FRAME CALLBACKS
     const handleWebcamVideoFrame = async (video) => {
         try {
-            await webcamPose.send({image: video})
+            if (webcamReceivedResults) {
+                webcamReceivedResults = false;
+                await webcamPose.send({image: video});
+                webcamReceivedResults = true;
+              }
         } catch {
             console.log("Failed inference on webcam video. Waiting and trying again.") 
             initialize({onlyTraining:false, onlyWebcam:true});
