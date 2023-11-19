@@ -7,10 +7,19 @@ import Type from "./Type";
 import ScrollToTop from "../ScrollToTop";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-
+import FileUpload from "../FileUpload"
 import yoga from "../../assets/yogagirlie.gif"
+import { useNavigate } from "react-router-dom"
 
 function Home() {
+  const navigate = useNavigate();
+
+  const handleFileChange = (file) => {
+    console.log('Selected file:', file);
+    const vidURL = URL.createObjectURL(file);
+    navigate('/game', {state: {video: vidURL}});
+  };
+
   return (
     <>
       <Navbar />
@@ -47,6 +56,12 @@ function Home() {
                   style={{ maxHeight: "450px" }}
                 />
               </Col>
+            </Row>
+            <Row>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+              <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>Upload your MP4 video here to start training</h1>
+              <FileUpload onFileChange={handleFileChange} />
+            </div>
             </Row>
         </Container>
       </Container>
