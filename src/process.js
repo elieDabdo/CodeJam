@@ -33,7 +33,7 @@ function getVectorDistance(p1, p2) {
 function sortLandmarks(landmarks,index) {
     // sort lowest to highest
     return landmarks.sort(function(a,b) {
-        return b[index] - a[index];
+        return a[index] - b[index];
     });
 }
 
@@ -158,25 +158,31 @@ const indexNameMappings = [
     // "right_toes"
 ]
 
+const scaleComparisons = [
+    ["left_shoulder", "left_hip"],
+    ["right_shoulder", "right_hip"],
+    ["left_hip", "right_hip"],
+    ["right_shoulder", "left_shoulder"],
+    ["right_shoulder", "neck_base"],
+    ["neck_base", "left_shoulder"],
+    ["head", "neck_base"],
+]
+
+let scale = 1.0;
+
 function scaleSkeletons(move,reference) {
-    let weighted_scale = 0;
-    let accumulated_weight = 0;
-    for (const landmark1 of indexNameMappings) {
-        for (const landmark2 of indexNameMappings) {
-            if (landmark1 === landmark2) continue;
-            let moveDistance = getVectorDistance(getCoordinates(move,landmark1),getCoordinates(move,landmark2));
-            let referenceDistance = getVectorDistance(getCoordinates(reference,landmark1),getCoordinates(reference,landmark2));
-            let scale = referenceDistance / moveDistance;
-            let confidence = Math.min(move.find((d) => d[0] === landmark1)[2], move.find((d) => d[0] === landmark2)[2]);
-            if (confidence < 0.5) continue;
-            weighted_scale = ((weighted_scale*accumulated_weight) + (confidence*scale)) / (confidence + accumulated_weight);
-            accumulated_weight += confidence;
-        }
+    for (const comparison of scaleComparisons) {
+        let confidence = Math.min(move.find((d) => d[0] === comparison[0])[2], move.find((d) => d[0] === comparison[1])[2], reference.find((d) => d[0] === comparison[1])[2], reference.find((d) => d[0] === comparison[1])[2]);
+        if (confidence < 0.5) continue;
+        let moveDistance = getVectorDistance(getCoordinates(move,comparison[0]),getCoordinates(move,comparison[1]));
+        let referenceDistance = getVectorDistance(getCoordinates(reference,comparison[0]),getCoordinates(reference,comparison[1]));
+        scale = referenceDistance / moveDistance;
+        break;
     }
     // scale the move skeleton by the ratio of the reference to move
     let moveScaled = [];
     for(let i in move) {
-        moveScaled.push([move[i][0], [move[i][1][0] * weighted_scale,move[i][1][1] * weighted_scale,move[i][1][2]], move[i][2]]);
+        moveScaled.push([move[i][0], [move[i][1][0] * scale,move[i][1][1] * scale,move[i][1][2]], move[i][2]]);
     }
     return moveScaled;
 }
@@ -190,4 +196,23 @@ function correctSkeletons(skeleton_to_change, reference_skeleton) {
     return aligned_scaled_skeleton_to_change;
 }
 
+function computeJointDistances(t, w) {
+
+    const shoulderNeckDistance = 0.25 * (Math.sqrt((t[1].x - t[2].x)*(t[1].x - t[2].x) + (t[1].y - t[2].y)*(t[1].y - t[2].y)) + Math.sqrt((w[1].x - w[2].x)*(w[1].x - w[2].x) + (w[1].y - w[2].y)*(w[1].y - w[2].y)));
+
+    let distances = []
+
+    for (let i = 0; i < t.length; i++) {
+
+        var distance = (t[i].visibility < 0.5 || w[i].visibility < 0.5) ? 0 : Math.sqrt((t[i].x- w[i].x)*(t[i].x-w[i].x) + (t[i].y - w[i].y)*(t[i].y - w[i].y));
+
+        distances.push(distance)
+
+      }
+
+      return {d:distances, sn:shoulderNeckDistance};
+
+}
+
+export { computeJointDistances };
 export { correctSkeletons };

@@ -1,5 +1,5 @@
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils/drawing_utils.js';
-import { correctSkeletons } from './process.js';
+import { correctSkeletons, computeJointDistances } from './process.js';
 
 // landmarks to be drawn on the training video
 const webcamLandmarks = {
@@ -18,11 +18,9 @@ const latestPoses = {
     "training": null
 }
 
-const jointQualities = null;
+let shoulderNeckDistance = null;
+let jointDistances = null;
 
-const joint_names = [
-    "head",
-];
 
 //////// VISUALIZATION PARAMETERS
 
@@ -81,12 +79,51 @@ const userLimbDesign = {color:userLimbColor, fillColor:userLimbFillColor, lineWi
 // lineWidth	number | Callback<LandmarkData, number>	The width of the line boundary of the shape. Defaults to 4.
 // radius	number | Callback<LandmarkData, number>	The radius of location marker. Defaults to 6.
 
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
 const displaySkeletonsOnCanvas = (canvas, landmarks) => {
+
+    const maxDist = shoulderNeckDistance;
+    const minDist = 0.0;
+
     canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
     if (landmarks.webcam) {  //display webcam landmarks
-        drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, userLimbDesign);
-        drawLandmarks(canvas, POSE_ENDPOINTS.map(index => landmarks.webcam[index]), userJointEndpointDesign);
-        drawLandmarks(canvas, landmarks.webcam, userJointDesign);
+        if (jointDistances) {
+            for (let i in landmarks.webcam) {
+                const joint_punishment = (clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist;
+                const col = `rgba(${255 * joint_punishment}, ${255 * (1 - joint_punishment)}, 0, 1)`;
+                drawLandmarks(canvas, POSE_ENDPOINTS.map(index => landmarks.webcam[index]), {color:col, fillColor:col, lineWidth:userJointEndpointDesign.lineWidth, radius:userJointEndpointDesign.radius });
+                drawLandmarks(canvas, landmarks.webcam, {color:col, fillColor:col, lineWidth:userJointDesign.lineWidth, radius:userJointDesign.radius });
+                
+                drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, userLimbDesign);
+                // drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, {
+                //     color: (data) => {
+                //       const x0 = out5.width * data.from.x;
+                //       const y0 = out5.height * data.from.y;
+                //       const x1 = out5.width * data.to.x;
+                //       const y1 = out5.height * data.to.y;
+
+                //       const col0 = `rgba(${255 * ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist)}, ${255 * (1 - ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist))}, 0, 1)`;
+                //       const col0 = `rgba(${255 * ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist)}, ${255 * (1 - ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist))}, 0, 1)`;
+            
+                //       const gradient = canvas.createLinearGradient(x0, y0, x1, y1);
+                //       gradient.addColorStop(
+                //           0, `rgba(0, ${255 * z0}, ${255 * (1 - z0)}, 1)`);
+                //       gradient.addColorStop(
+                //           1.0, `rgba(0, ${255 * z1}, ${255 * (1 - z1)}, 1)`);
+                //       return gradient;
+                //     },
+                //     lineWidth: userJointDesign.lineWidth,
+                //     radius: userJointDesign.radius
+                //   });
+            }
+        } else {
+            drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, userLimbDesign);
+            drawLandmarks(canvas, POSE_ENDPOINTS.map(index => landmarks.webcam[index]), userJointEndpointDesign);
+            drawLandmarks(canvas, landmarks.webcam, userJointDesign);
+        }
     }
     if (landmarks.training) { //display training landmarks
         drawConnectors(canvas, landmarks.training, POSE_CONNECTIONS, trainerLimbDesign);
@@ -223,7 +260,11 @@ const onWebcamPose = (detection, webCamCanvas, trainingCanvas, user_params) => {
         trainingLandmarks.webcam = null;
     } else {
         latestPoses.webcam = processedDetection.poseLandmarks;
-        // jointQualities = computeJointQualities(latestPoses);
+        if (latestPoses.training) {
+            let distanceInfo = computeJointDistances(decodeLandmarks(correctSkeletons(encodeLandmarks(latestPoses.webcam), encodeLandmarks(latestPoses.training))), latestPoses.training);
+            jointDistances = distanceInfo.d;
+            shoulderNeckDistance = distanceInfo.sn;
+        } 
     }
     if (user_params.draw_webcam_skeleton_on_webcam) {
         webcamLandmarks.webcam = processedDetection.poseLandmarks;
@@ -245,7 +286,11 @@ const onTrainingPose = (detection, webCamCanvas, trainingCanvas, user_params) =>
         trainingLandmarks.training = null;
     } else {
         latestPoses.training = processedDetection.poseLandmarks;
-        // jointQualities = computeJointQualities(latestPoses);
+        if (latestPoses.webcam) {
+            let distanceInfo = computeJointDistances(decodeLandmarks(correctSkeletons(encodeLandmarks(latestPoses.webcam), encodeLandmarks(latestPoses.training))), latestPoses.training);
+            jointDistances = distanceInfo.d;
+            shoulderNeckDistance = distanceInfo.sn;
+        }
     }
     if (user_params.draw_training_skeleton_on_webcam) {
         webcamLandmarks.training = (webcamLandmarks.webcam && processedDetection.poseLandmarks) ? decodeLandmarks(correctSkeletons(encodeLandmarks(processedDetection.poseLandmarks), encodeLandmarks(webcamLandmarks.webcam))) : processedDetection.poseLandmarks;
