@@ -45,9 +45,9 @@ video {
 
 .videos {
   position: relative;
-  top: 4vh;
-  height: 73vh;
-  width: 80%;
+  top: 2.5vh;
+  height: 80vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   /* bottom: 53.2px; */

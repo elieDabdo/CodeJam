@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 // import '@mediapipe/control_utils/control_utils.css';
 import { Pose } from '@mediapipe/pose/pose.js';
 import VideoPlayer from './VideoPlayer';
@@ -93,16 +93,18 @@ function Playback({ video_url, user_params }) {
     const trainingCanvasRef = useRef(null);
 
     // DEFINE POSE DETECTION CALLBACK FUNCTION
-    let initOnResults = false;
-    while (!initOnResults) {
-        try {
-            trainingPose.onResults((results) => onTrainingPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
-            webcamPose.onResults((results) => onWebcamPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
-            initOnResults = true;
-        } catch {
-            console.log("Failed onResults setup.")
+    useEffect(() => {
+        let initOnResults = false;
+        while (!initOnResults) {
+            try {
+                trainingPose.onResults((results) => onTrainingPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
+                webcamPose.onResults((results) => onWebcamPose(results, webcamCanvasRef.current.getContext('2d'), trainingCanvasRef.current.getContext('2d'), user_params));
+                initOnResults = true;
+            } catch {
+                console.log("Failed onResults setup.")
+            }
         }
-    }
+    })
     const minimizedProps = {className:"min-player", height:'30%', width:'500vh'};
     const maximizedProps = {className:"max-player", height:'100vh', width:'100%'};
     
