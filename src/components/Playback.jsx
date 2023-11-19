@@ -47,18 +47,20 @@ const poseOptions = {
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5,
     runningMode: "VIDEO",
+    modelSelection: 0,
+    modelComplexity: 0
 }
 
 const initialize = async ({onlyTraining, onlyWebcam}) => {
     try {
         if (!onlyWebcam) {
             trainingPose = await new Pose({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+                locateFile: (file) => `${process.env.PUBLIC_URL}/pose/${file}`
                 });
         }
         if (!onlyTraining) {
             webcamPose = await new Pose({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`
+                locateFile: (file) => `${process.env.PUBLIC_URL}/pose/${file}`
                 });
         }
         webcamPose.setOptions(poseOptions);
