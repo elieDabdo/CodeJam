@@ -15,7 +15,7 @@ function PlaybackSettings(
       toggle2: true,
       toggle3: true,
     });
-    
+
     setTrainingVideoMaximized(toggleValues.toggle1)
     setDrawVidSkelOnCam(toggleValues.toggle2);
     setDrawVidSkelOnVid(toggleValues.toggle2);
@@ -45,7 +45,7 @@ function PlaybackSettings(
       <div style={{ transform: "translate(-50%)", position: "relative", left: "50%", justifyContent: 'center', flexDirection: 'column', display: 'flex' }}>
         <h1 style={{color:'white'}}>Settings</h1>
         <br></br>
-        <Row gutter={[16, 24]}>
+        {/* <Row gutter={[16, 24]}>
             <Col span={24} style={{fontWeight:'500', fontSize:'1.25rem', display: 'flex', justifyContent: 'left', paddingLeft: '3rem', color:'white'}}>
                 <Switch
                 checked={toggleValues.toggle1}
@@ -54,7 +54,7 @@ function PlaybackSettings(
                 />
                 Swap Videos
             </Col>
-        </Row>
+        </Row> */}
         <br></br>
         <Row gutter={[16, 24]}>
             <Col span={24} style={{fontWeight:'500', fontSize:'1.25rem', display: 'flex', justifyContent: 'left', paddingLeft: '3rem', color:'white'}}>
