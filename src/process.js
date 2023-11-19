@@ -172,7 +172,7 @@ let scale = 1.0;
 function scaleSkeletons(move,reference) {
     for (const comparison of scaleComparisons) {
         let confidence = Math.min(move.find((d) => d[0] === comparison[0])[2], move.find((d) => d[0] === comparison[1])[2], reference.find((d) => d[0] === comparison[1])[2], reference.find((d) => d[0] === comparison[1])[2]);
-        if (confidence < 0.5) continue;
+        if (confidence < 0.3) continue;
         let moveDistance = getVectorDistance(getCoordinates(move,comparison[0]),getCoordinates(move,comparison[1]));
         let referenceDistance = getVectorDistance(getCoordinates(reference,comparison[0]),getCoordinates(reference,comparison[1]));
         scale = referenceDistance / moveDistance;
