@@ -72,6 +72,7 @@ function shiftCoordinates(point,offset) {
     for(let i in point) {
         newPoint.push(point[i] + offset[i]);
     }
+    return newPoint;
 }
 
 //need to make getMiddlePoint only get X
@@ -101,25 +102,22 @@ function alignSkeletonX(move, reference) {
     const offset = [middleReference - middleMove,0,0];
     //shift every landmark in move by the difference
     let moveAlignedX = [];
-    for(let landmark in move) {
-        moveAlignedX.push([landmark[0],shiftCoordinates(landmark[1],offset),landmark[2]]);
+    for(let i in move) {
+        moveAlignedX.push([move[i][0],shiftCoordinates(move[i][1],offset),move[i][2]]);
     }
     return moveAlignedX;
 
 }
 
 function getLowestPointNotHands(landmarks) {
-    for(let landmark in landmarks) {
-        if(landmark[0] !== "left_hand" && landmark[0] !== "right_hand") {
-            return landmark[1];
+    for(let i in landmarks) {
+        if(landmarks[i][0] !== "left_hand" && landmarks[i][0] !== "right_hand") {
+            return landmarks[i][1];
         }
     }
 }
 
 function alignSkeletonY(move, reference) {
-    // sort both skeletons
-    let moveSorted = sortLandmarks(move,1);
-    let referenceSorted = sortLandmarks(reference,1);
     // find the lowest point excluding the hands
 
     // gotta make this not get the hands
@@ -129,8 +127,8 @@ function alignSkeletonY(move, reference) {
     let offset = [0,lowestReferenceCoordinates[1] - lowestMoveCoordinates[1],0];
 
     let moveAlignedY = [];
-    for(let landmark in move) {
-        moveAlignedY.push([landmark[0],shiftCoordinates(landmark[1],offset),landmark[2]]);
+    for(let i in move) {
+        moveAlignedY.push([move[i][0],shiftCoordinates(move[i][1],offset),move[i][2]]);
     }
     return moveAlignedY;
 
@@ -151,7 +149,11 @@ function scaleSkeletons(move,reference) {
 }
 
 function correctSkeletons(skeleton_to_change, reference_skeleton) {
-    const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
-    const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
+    // const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
+    // const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
+
+    const aligned_scaled_skeleton_to_change = alignSkeletons(skeleton_to_change, reference_skeleton);
     return aligned_scaled_skeleton_to_change;
 }
+
+export { correctSkeletons };
