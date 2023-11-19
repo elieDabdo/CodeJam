@@ -156,4 +156,24 @@ function correctSkeletons(skeleton_to_change, reference_skeleton) {
     return aligned_scaled_skeleton_to_change;
 }
 
+function computeJointQualities(latestPoses) {
+    
+    const t = latestPoses.training
+    const w = latestPoses.webcam
+
+    let distances = []
+
+    for (let i = 0; i < latestPoses.training.length; i++) {
+        
+        var distance = (t[i].x- w[i].x)*(t[i].x- w[i].x) + (t[i].y - w[i].y)*(t[i].y - w[i].y)
+
+        distances.push(distance)
+
+      }
+
+      return distances
+
+}
+
 export { correctSkeletons };
+export { computeJointQualities };
