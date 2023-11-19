@@ -51,26 +51,26 @@ const POSE_ENDPOINTS = [0, 6, 7];
 const trainerJointColor = '#03c2fc88';
 const trainerJointFillColor = '#03c2fc88';
 const trainerJointLineWidth = 1;
-const trainerJointRadius = 1.5; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
+const trainerJointRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const trainerJointDesign = {color:trainerJointColor, fillColor:trainerJointFillColor, lineWidth:trainerJointLineWidth, radius:trainerJointRadius}
-const trainerJointEndpointDesign = {color:trainerJointColor, fillColor:trainerJointFillColor, lineWidth:trainerJointLineWidth, radius:2.5}
+const trainerJointEndpointDesign = {color:trainerJointColor, fillColor:trainerJointFillColor, lineWidth:trainerJointLineWidth, radius:1.5}
 
 const trainerLimbColor = '#03c2fc88';
 const trainerLimbFillColor = '#03c2fc88';
-const trainerLimbLineWidth = 1;
+const trainerLimbLineWidth = 2;
 const trainerLimbRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const trainerLimbDesign = {color:trainerLimbColor, fillColor:trainerLimbFillColor, lineWidth:trainerLimbLineWidth, radius:trainerLimbRadius}
 
 const userJointColor = '#c799bd88';
 const userJointFillColor = '#c799bd88';
 const userJointLineWidth = 1;
-const userJointRadius = 1.5; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
+const userJointRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const userJointDesign = {color:userJointColor, fillColor:userJointFillColor, lineWidth:userJointLineWidth, radius:userJointRadius}
-const userJointEndpointDesign = {color:userJointColor, fillColor:userJointFillColor, lineWidth:userJointLineWidth, radius:2.5}
+const userJointEndpointDesign = {color:userJointColor, fillColor:userJointFillColor, lineWidth:userJointLineWidth, radius:1.5}
 
 const userLimbColor = '#c799bd88';
 const userLimbFillColor = '#c799bd88';
-const userLimbLineWidth = 1;
+const userLimbLineWidth = 2;
 const userLimbRadius = 1; // NOTE: THESE CAN ALSO BE FUNCTIONS OF DATA (WHERE DATA IS THE POINT)
 const userLimbDesign = {color:userLimbColor, fillColor:userLimbFillColor, lineWidth:userLimbLineWidth, radius:userLimbRadius}
 
