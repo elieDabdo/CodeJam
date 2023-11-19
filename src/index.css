@@ -25,8 +25,8 @@ video {
   width: 30%;
   height: 30%;
   z-index: 10;
-  border-bottom: 5px solid #000; /* Set the border width, style, and color */
-  border-right: 5px solid #000; /* Set the border width, style, and color */
+  /* border-bottom: 5px solid #000; /* Set the border width, style, and color */
+  /* border-right: 5px solid #000; Set the border width, style, and color */ 
 }
 
 .max-player {
@@ -45,9 +45,9 @@ video {
 
 .videos {
   position: relative;
-  /* top: 96px; */
-  height: 600px;
-  width: 100%;
+  top: 4vh;
+  height: 73vh;
+  width: 80%;
   display: flex;
   justify-content: center;
   /* bottom: 53.2px; */
