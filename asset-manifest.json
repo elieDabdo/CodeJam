@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/CodeJam/static/css/main.bee0e409.css",
-    "main.js": "/CodeJam/static/js/main.b71b4294.js",
+    "main.css": "/CodeJam/static/css/main.eb3e5b5f.css",
+    "main.js": "/CodeJam/static/js/main.3f4d5c85.js",
     "static/js/787.9dc40cd0.chunk.js": "/CodeJam/static/js/787.9dc40cd0.chunk.js",
     "static/media/dancing.mp4": "/CodeJam/static/media/dancing.513471ba3344b5a073c4.mp4",
     "static/media/tai_chi.mp4": "/CodeJam/static/media/tai_chi.5755f8460fbde6843fed.mp4",
     "static/media/yoga.mp4": "/CodeJam/static/media/yoga.fdfb3ab933b3a1ab5ea9.mp4",
     "static/media/stretching.mp4": "/CodeJam/static/media/stretching.7a050df4900f8842439d.mp4",
     "static/media/yogagirlie.gif": "/CodeJam/static/media/yogagirlie.737fbf107cec015cd013.gif",
-    "static/media/logo.png": "/CodeJam/static/media/logo.81fe74b0628dbfb2afdb.png",
     "static/media/home-main.svg": "/CodeJam/static/media/home-main.359935c39288e92d4dba5c9f2445b91d.svg",
+    "static/media/logo-nobg.png": "/CodeJam/static/media/logo-nobg.ce6dd5f46346da4d1c5d.png",
     "static/media/home-bg.jpg": "/CodeJam/static/media/home-bg.dc52d5d40a40b13154b0.jpg",
     "static/media/avatar.svg": "/CodeJam/static/media/avatar.7f806e40d46fc76fbc3c4a3d71349951.svg",
     "static/media/pre.svg": "/CodeJam/static/media/pre.4410c5baaa673cc131da.svg",
     "index.html": "/CodeJam/index.html",
-    "main.bee0e409.css.map": "/CodeJam/static/css/main.bee0e409.css.map",
-    "main.b71b4294.js.map": "/CodeJam/static/js/main.b71b4294.js.map",
+    "main.eb3e5b5f.css.map": "/CodeJam/static/css/main.eb3e5b5f.css.map",
+    "main.3f4d5c85.js.map": "/CodeJam/static/js/main.3f4d5c85.js.map",
     "787.9dc40cd0.chunk.js.map": "/CodeJam/static/js/787.9dc40cd0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.bee0e409.css",
-    "static/js/main.b71b4294.js"
+    "static/css/main.eb3e5b5f.css",
+    "static/js/main.3f4d5c85.js"
   ]
 }
