@@ -1,16 +1,25 @@
 import React from 'react';
-import { useNavigate } from "react-router-dom"
-import './Preset.css';
+import './Preset.scss';
 
 const Preset = ({ pictureUrl, title, video }) => {
-  const navigate = useNavigate();
+  const isDark = true;
 
   return (
-    <div className="preset">
-      <button onClick={()=>navigate('/game', {state: {video: video}})}>{<h2>{title}</h2>}</button>
-      <img src={pictureUrl} alt="Box Picture" />
-    </div>
-  );
-};
+    <div className={isDark ? "experience-card-dark" : "experience-card"}>
+      <div className="experience-banner">
+        <div className="experience-blurred_div"></div>
+        <div className="experience-div-company">
+          <h5 className="experience-text-company">{title}</h5>
+        </div>
 
-export default Preset;
+        <img
+          className="experience-roundedimg"
+          src={pictureUrl}
+        />
+      </div>
+     
+      </div>
+  );
+}
+
+export default Preset
