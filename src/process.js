@@ -13,7 +13,6 @@ function angle(v1, v2, z_scale) {
     const norm1 = Math.sqrt(v1.reduce((acc, val) => acc + val ** 2, 0));
     const norm2 = Math.sqrt(v2.reduce((acc, val) => acc + val ** 2, 0));
 
-    //console.log(dot / (norm1 * norm2));
     return Math.acos(dot / (norm1 * norm2));
 }
 
@@ -197,12 +196,15 @@ function correctSkeletons(skeleton_to_change, reference_skeleton) {
 
 function computeJointDistances(t, w) {
 
-    const shoulderShoulderDistance = Math.sqrt((t[3].x - t[2].x)*(t[3].x - t[2].x) + (t[3].y - t[2].y)*(t[3].y - t[2].y) + (t[3].z - t[2].z)*(t[3].z - t[2].z));
+    let shoulderShoulderDistance = Math.max(0.0001, Math.sqrt((t[3].x - t[2].x)*(t[3].x - t[2].x) + (t[3].y - t[2].y)*(t[3].y - t[2].y) + (t[3].z - t[2].z)*(t[3].z - t[2].z)));
+
+    if (isNaN(shoulderShoulderDistance)) shoulderShoulderDistance = 0.1;
 
     let distances = [];
 
     for (let i = 0; i < t.length; i++) {
         var distance = (t[i].visibility < 0.5 || w[i].visibility < 0.5) ? 0 : Math.sqrt((t[i].x- w[i].x)*(t[i].x-w[i].x) + (t[i].y - w[i].y)*(t[i].y - w[i].y));
+        if (isNaN(distance)) distance = 0;
         distances.push(distance)
     }
 

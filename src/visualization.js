@@ -98,27 +98,6 @@ const displaySkeletonsOnWebcamCanvas = (canvas, landmarks) => {
                 const col = `rgba(${255 * joint_punishment}, ${255 * (1 - joint_punishment)}, 0, 1)`;
                 if (i in POSE_ENDPOINTS) drawLandmarks(canvas, [POSE_ENDPOINTS.map(index => landmarks.webcam[index])[i]], {color:col, fillColor:userJointEndpointDesign.fillColor, lineWidth:userJointEndpointDesign.lineWidth, radius:userJointEndpointDesign.radius });
                 else drawLandmarks(canvas, [landmarks.webcam[i]], {color:col, fillColor:userJointDesign.fillColor, lineWidth:userJointDesign.lineWidth, radius:userJointDesign.radius });
-                
-                // drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, {
-                //     color: (data) => {
-                //       const x0 = out5.width * data.from.x;
-                //       const y0 = out5.height * data.from.y;
-                //       const x1 = out5.width * data.to.x;
-                //       const y1 = out5.height * data.to.y;
-
-                //       const col0 = `rgba(${255 * ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist)}, ${255 * (1 - ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist))}, 0, 1)`;
-                //       const col0 = `rgba(${255 * ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist)}, ${255 * (1 - ((clamp(jointDistances[i], minDist, maxDist) - minDist) / maxDist))}, 0, 1)`;
-            
-                //       const gradient = canvas.createLinearGradient(x0, y0, x1, y1);
-                //       gradient.addColorStop(
-                //           0, `rgba(0, ${255 * z0}, ${255 * (1 - z0)}, 1)`);
-                //       gradient.addColorStop(
-                //           1.0, `rgba(0, ${255 * z1}, ${255 * (1 - z1)}, 1)`);
-                //       return gradient;
-                //     },
-                //     lineWidth: userJointDesign.lineWidth,
-                //     radius: userJointDesign.radius
-                //   });
             }
         } else {
             drawConnectors(canvas, landmarks.webcam, POSE_CONNECTIONS, userLimbDesign);
