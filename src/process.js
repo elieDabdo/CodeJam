@@ -58,12 +58,9 @@ function getCoordinates(landmarks,key) {
 }
 
 function alignSkeletons(move, reference) {
-    // const moveAlignedX = alignSkeletonX(move, reference);
-    // const moveAlignedXY = alignSkeletonY(moveAlignedX, reference);
-    // return moveAlignedXY;
-
     const moveAlignedX = alignSkeletonX(move, reference);
-    return moveAlignedX;
+    const moveAlignedXY = alignSkeletonY(moveAlignedX, reference);
+    return moveAlignedXY;
 }
 
 function isConfidentInBoth(move, reference, key) {
@@ -113,9 +110,9 @@ function alignSkeletonX(move, reference) {
 }
 
 function getLowestPointNotHands(landmarks) {
-    for(let landmark in landmarks) {
-        if(landmark[0] !== "left_hand" && landmark[0] !== "right_hand") {
-            return landmark[1];
+    for(let i in landmarks) {
+        if(landmarks[i][0] !== "left_hand" && landmarks[i][0] !== "right_hand") {
+            return landmarks[i][1];
         }
     }
 }
@@ -133,8 +130,8 @@ function alignSkeletonY(move, reference) {
     let offset = [0,lowestReferenceCoordinates[1] - lowestMoveCoordinates[1],0];
 
     let moveAlignedY = [];
-    for(let landmark in move) {
-        moveAlignedY.push([landmark[0],shiftCoordinates(landmark[1],offset),landmark[2]]);
+    for(let i in move) {
+        moveAlignedY.push([move[i][0],shiftCoordinates(move[i][1],offset),move[i][2]]);
     }
     return moveAlignedY;
 
