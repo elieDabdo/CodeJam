@@ -118,9 +118,6 @@ function getLowestPointNotHands(landmarks) {
 }
 
 function alignSkeletonY(move, reference) {
-    // sort both skeletons
-    let moveSorted = sortLandmarks(move,1);
-    let referenceSorted = sortLandmarks(reference,1);
     // find the lowest point excluding the hands
 
     // gotta make this not get the hands
