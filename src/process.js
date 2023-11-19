@@ -189,7 +189,6 @@ function scaleSkeletons(move,reference) {
 
 function correctSkeletons(skeleton_to_change, reference_skeleton) {
     const scaled_skeleton_to_change = scaleSkeletons(skeleton_to_change, reference_skeleton);
-    console.log(scaled_skeleton_to_change);
     const aligned_scaled_skeleton_to_change = alignSkeletons(scaled_skeleton_to_change, reference_skeleton);
 
     // const aligned_scaled_skeleton_to_change = alignSkeletons(skeleton_to_change, reference_skeleton);
@@ -198,19 +197,16 @@ function correctSkeletons(skeleton_to_change, reference_skeleton) {
 
 function computeJointDistances(t, w) {
 
-    const shoulderNeckDistance = 0.25 * (Math.sqrt((t[1].x - t[2].x)*(t[1].x - t[2].x) + (t[1].y - t[2].y)*(t[1].y - t[2].y)) + Math.sqrt((w[1].x - w[2].x)*(w[1].x - w[2].x) + (w[1].y - w[2].y)*(w[1].y - w[2].y)));
+    const shoulderShoulderDistance = Math.sqrt((t[3].x - t[2].x)*(t[3].x - t[2].x) + (t[3].y - t[2].y)*(t[3].y - t[2].y) + (t[3].z - t[2].z)*(t[3].z - t[2].z));
 
-    let distances = []
+    let distances = [];
 
     for (let i = 0; i < t.length; i++) {
-
         var distance = (t[i].visibility < 0.5 || w[i].visibility < 0.5) ? 0 : Math.sqrt((t[i].x- w[i].x)*(t[i].x-w[i].x) + (t[i].y - w[i].y)*(t[i].y - w[i].y));
-
         distances.push(distance)
+    }
 
-      }
-
-      return {d:distances, sn:shoulderNeckDistance};
+    return {d:distances, sn:shoulderShoulderDistance};
 
 }
 

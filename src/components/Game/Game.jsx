@@ -17,9 +17,9 @@ const Game = () => {
             <Playback video_url={video} user_params={
                 {
                   training_video_maximized:true,
-                  draw_webcam_skeleton_on_webcam:true,
+                  draw_webcam_skeleton_on_webcam:false,
                   draw_webcam_skeleton_on_training:true,
-                  draw_training_skeleton_on_training:true,
+                  draw_training_skeleton_on_training:false,
                   draw_training_skeleton_on_webcam:true
                 }} />
             <Footer />
