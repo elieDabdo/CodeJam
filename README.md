@@ -1,4 +1,4 @@
-# Demo (click for full video)
+# Demo (click image for full video)
 [![IMAGE ALT TEXT HERE](https://github.com/elieDabdo/CodeJam/blob/main/src/assets/iii.png)](https://www.youtube.com/watch?v=1y-ay74SZjs&ab_channel=TeamAUV)
 
 # Learn new dances, sports, or stretching techniques in a few clicks
