@@ -1,5 +1,5 @@
 # Demo (click for full video)
-[![IMAGE ALT TEXT HERE](https://github.com/elieDabdo/CodeJam/src/assets/iii)](https://www.youtube.com/watch?v=1y-ay74SZjs&ab_channel=TeamAUV)
+[![IMAGE ALT TEXT HERE](https://github.com/elieDabdo/CodeJam/blob/main/src/assets/iii.png)](https://www.youtube.com/watch?v=1y-ay74SZjs&ab_channel=TeamAUV)
 
 # Learn new dances, sports, or stretching techniques in a few clicks
 Powered by MediaPipe, our website detects, aligns and overlays the user's skeleton onto a training video, giving visual feedback on how accurately the user is mimicking the trainer. You can upload a .mp4 file or select from some pre-loaded videos to start training. A perfect application for fans of yoga, tai-chi, dancing, or any sport where body part positioning is very important.
